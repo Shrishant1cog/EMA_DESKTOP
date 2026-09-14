@@ -1,0 +1,35 @@
+# Virtual environments
+.venv/
+venv/
+env/
+
+# Secrets and credentials
+.env
+credentials.json
+token.json
+
+# Python artifacts
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+.DS_Store
+
+# Logs and local databases
+*.log
+*.db
+state.db
+
+# OS / editor
+.idea/
+.vscode/
+venv/
+__pycache__/
+*.pyc
+.env
+token.json
+credentials.json
+state.db
+*.log
+.neon
+node_modules/
