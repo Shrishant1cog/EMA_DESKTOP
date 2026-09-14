@@ -3,6 +3,10 @@ fastapi>=0.110.0
 uvicorn>=0.28.0
 pydantic>=2.7.0
 
+# Database & Persistent Storage (Added for Neon Postgres)
+psycopg2-binary>=2.9.9
+sqlalchemy>=2.0.25
+
 # AI Orchestration
 groq>=0.4.2
 openai>=1.30.0
