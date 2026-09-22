@@ -1,0 +1,23 @@
+# Auto-detect text files and normalize line endings to LF on commit
+* text=auto
+
+# Explicit text files
+*.py text eol=lf
+*.html text eol=lf
+*.css text eol=lf
+*.js text eol=lf
+*.json text eol=lf
+*.md text eol=lf
+*.txt text eol=lf
+*.iss text eol=crlf
+
+# Windows Batch scripts MUST keep CRLF to execute properly
+*.bat text eol=crlf
+*.cmd text eol=crlf
+
+# Binaries
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.ico binary
+*.pdf binary

@@ -1,0 +1,43 @@
+ai-calendar-assistant/
+├── backend/
+│   ├── models/
+│   │   ├── __init__.py
+│   │   └── event_schemas.py
+│   ├── services/
+│   │   ├── __init__.py
+│   │   ├── ai_service.py
+│   │   ├── calendar_service.py
+│   │   ├── drive_service.py
+│   │   ├── drive_state_adapter.py
+│   │   ├── gmail_service.py
+│   │   └── google_auth.py
+│   ├── utils/
+│   │   ├── __init__.py
+│   │   ├── dns_resolver.py
+│   │   ├── logger.py
+│   │   └── state_tracker.py
+│   ├── __init__.py
+│   └── main.py
+├── extractors/
+│   ├── __init__.py
+│   ├── ocr_extractor.py
+│   └── text_extractor.py
+├── frontend/
+│   ├── favicon.ico
+│   ├── index.html
+│   ├── login.html
+│   └── logo.png
+├── Output/
+│   └── EMA_Setup.exe
+├── .env
+├── .gitattributes
+├── .gitignore
+├── assistant_v2.db
+├── config.py
+├── desktop_app.py
+├── install_dependencies.bat
+├── installer.iss
+├── print_structure.py
+├── requirements.txt
+├── run_app.vbs
+└── setup_app.bat

@@ -1,35 +1,30 @@
-# Virtual environments
-.venv/
-venv/
-env/
-
-# Secrets and credentials
+# Secrets & Environment Variables (CRITICAL)
 .env
-credentials.json
-token.json
+.env.*
+*.key
+*.pem
 
-# Python artifacts
+# Python Virtual Environments & Caches
+.venv/
+env/
 __pycache__/
 *.py[cod]
-*.pyo
-*.pyd
-.DS_Store
+*$py.class
 
-# Logs and local databases
-*.log
+# App State & Local Profiles
 *.db
-state.db
-
-# OS / editor
-.idea/
-.vscode/
-venv/
-__pycache__/
-*.pyc
-.env
-token.json
-credentials.json
-state.db
+*.db-journal
 *.log
-.neon
-node_modules/
+backend/*.log
+.browser_session/
+app_profile/
+
+# Inno Setup & Build Artifacts
+Output/
+*.exe
+
+# OS & Editor Metadata
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/

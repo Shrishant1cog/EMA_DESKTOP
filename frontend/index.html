@@ -1,13 +1,14 @@
 <!DOCTYPE html>
 <html lang="en" class="dark">
 <head>
-  <meta charset="UTF-8">
-  <title>Smart Universal Email Assistant</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8" />
+  <title>EMA - Smart Universal Email Assistant</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <link rel="icon" type="image/x-icon" href="/favicon.ico" />
 
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
 
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://unpkg.com/lucide@latest"></script>
@@ -18,7 +19,14 @@
       theme: {
         extend: {
           fontFamily: {
-            sans: ['"Plus Jakarta Sans"', 'sans-serif']
+            sans: ['"Plus Jakarta Sans"', 'sans-serif'],
+            mono: ['"JetBrains Mono"', 'monospace']
+          },
+          colors: {
+            emaDark: '#060911',
+            emaMain: '#0a0e1a',
+            emaCard: '#101626',
+            emaBorder: 'rgba(255, 255, 255, 0.07)',
           }
         }
       }
@@ -26,522 +34,461 @@
   </script>
 
   <style>
-    .aurora-container {
-      position: fixed;
-      inset: 0;
+    :root {
+      --mouse-x: 50vw;
+      --mouse-y: 50vh;
+    }
+
+    body {
+      background-color: #060911;
+      color: #f3f4f6;
+      height: 100vh;
       overflow: hidden;
-      pointer-events: none;
-      z-index: 0;
-      background-color: #060913;
+      user-select: none;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    @media (pointer: fine) {
+      .mouse-spotlight {
+        position: fixed;
+        inset: 0;
+        pointer-events: none;
+        z-index: 1;
+        background: radial-gradient(850px circle at var(--mouse-x) var(--mouse-y), rgba(59, 130, 246, 0.08), rgba(14, 165, 233, 0.02) 40%, transparent 70%);
+        will-change: background;
+      }
     }
 
     .aurora-blob {
-      position: absolute;
+      position: fixed;
       border-radius: 50%;
-      filter: blur(100px);
-      opacity: 0.35;
-      mix-blend-mode: screen;
-      will-change: transform;
-      transform: translateZ(0);
+      filter: blur(80px);
+      opacity: 0.15;
+      pointer-events: none;
+      z-index: 0;
     }
-
-    .blob-1 {
-      width: 55vw; height: 55vw;
-      background: radial-gradient(circle, rgba(99, 102, 241, 0.75) 0%, rgba(67, 56, 202, 0) 70%);
-      top: -20%; left: -10%;
-      animation: drift-1 28s ease-in-out infinite alternate;
-    }
-
-    .blob-2 {
-      width: 50vw; height: 50vw;
-      background: radial-gradient(circle, rgba(14, 165, 233, 0.65) 0%, rgba(2, 132, 199, 0) 70%);
-      bottom: -15%; right: -10%;
-      animation: drift-2 32s ease-in-out infinite alternate;
-    }
-
-    .blob-3 {
-      width: 45vw; height: 45vw;
-      background: radial-gradient(circle, rgba(168, 85, 247, 0.5) 0%, rgba(126, 34, 206, 0) 70%);
-      top: 30%; left: 30%;
-      animation: drift-3 36s ease-in-out infinite alternate;
-    }
-
-    @keyframes drift-1 {
-      0%   { transform: translate(0, 0) scale(1); }
-      50%  { transform: translate(120px, 80px) scale(1.15); }
-      100% { transform: translate(-60px, 140px) scale(0.95); }
-    }
-    @keyframes drift-2 {
-      0%   { transform: translate(0, 0) scale(1); }
-      50%  { transform: translate(-140px, -90px) scale(1.12); }
-      100% { transform: translate(80px, -60px) scale(0.9); }
-    }
-    @keyframes drift-3 {
-      0%   { transform: translate(0, 0) scale(0.95); }
-      50%  { transform: translate(-100px, 110px) scale(1.2); }
-      100% { transform: translate(110px, -70px) scale(1); }
-    }
+    .blob-1 { width: 45vw; height: 45vw; background: radial-gradient(circle, #3b82f6 0%, transparent 70%); top: -15%; left: -10%; }
+    .blob-2 { width: 40vw; height: 40vw; background: radial-gradient(circle, #6366f1 0%, transparent 70%); bottom: -10%; right: -5%; }
 
     .glass-card {
-      background: rgba(13, 18, 30, 0.62);
-      backdrop-filter: blur(20px);
-      -webkit-backdrop-filter: blur(20px);
-      border: 1px solid rgba(255, 255, 255, 0.08);
-      box-shadow: 0 20px 40px -15px rgba(0, 0, 0, 0.35);
+      background: rgba(16, 22, 38, 0.85);
+      backdrop-filter: blur(14px);
+      -webkit-backdrop-filter: blur(14px);
+      border: 1px solid rgba(255, 255, 255, 0.07);
+      transition: transform 0.16s ease, border-color 0.16s ease, box-shadow 0.16s ease;
+    }
+    .glass-card:hover {
+      border-color: rgba(255, 255, 255, 0.12);
     }
 
-    ::-webkit-scrollbar { width: 5px; height: 5px; }
-    ::-webkit-scrollbar-thumb { background: rgba(255, 255, 255, 0.15); border-radius: 999px; }
+    .btn-action {
+      transition: transform 0.14s ease, filter 0.14s ease, background-color 0.14s ease;
+    }
+    .btn-action:hover { filter: brightness(1.08); }
+    .btn-action:active { transform: scale(0.96); }
+
+    .tab-content-pane {
+      animation: tabFadeIn 0.22s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    }
+    @keyframes tabFadeIn {
+      from { opacity: 0; transform: translateY(6px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    ::-webkit-scrollbar { width: 4px; height: 4px; }
+    ::-webkit-scrollbar-thumb { background: rgba(255, 255, 255, 0.14); border-radius: 999px; }
+    ::-webkit-scrollbar-track { background: transparent; }
   </style>
 </head>
-<body class="text-slate-200 min-h-screen font-sans antialiased relative overflow-x-hidden selection:bg-indigo-500/30 selection:text-indigo-200">
+<body class="font-sans antialiased flex relative">
 
-  <!-- Full-Screen Global Loading Screen -->
-  <div id="global-loader" class="fixed inset-0 z-50 flex flex-col items-center justify-center bg-slate-950/80 backdrop-blur-md transition-opacity duration-200 opacity-0 pointer-events-none">
+  <!-- Ambient Shaders -->
+  <div class="mouse-spotlight"></div>
+  <div class="aurora-blob blob-1"></div>
+  <div class="aurora-blob blob-2"></div>
+
+  <!-- Toast Notification System -->
+  <div id="toast-container" class="fixed top-5 right-5 z-50 flex flex-col gap-2 pointer-events-none"></div>
+
+  <!-- Global Loader -->
+  <div id="global-loader" class="fixed inset-0 z-50 flex flex-col items-center justify-center bg-slate-950/80 backdrop-blur-md transition-all duration-300 opacity-0 pointer-events-none p-4">
     <div class="relative flex items-center justify-center">
-      <div class="w-14 h-14 rounded-full border-4 border-indigo-500/20 border-t-indigo-500 animate-spin"></div>
-      <div class="absolute w-8 h-8 rounded-full bg-indigo-500/10 flex items-center justify-center text-indigo-400">
+      <div class="w-14 h-14 rounded-full border-4 border-blue-500/20 border-t-blue-500 animate-spin"></div>
+      <div class="absolute w-8 h-8 rounded-full bg-blue-500/15 flex items-center justify-center text-blue-400">
         <i data-lucide="sparkles" class="w-4 h-4 animate-pulse"></i>
       </div>
     </div>
-    <p id="loader-message" class="mt-4 text-xs font-semibold tracking-wider text-slate-300 uppercase animate-pulse">Processing...</p>
+    <p id="loader-message" class="mt-4 text-xs font-semibold tracking-wider text-slate-300 uppercase animate-pulse text-center">Processing...</p>
+    <button id="loader-cancel-btn" onclick="hideLoader()" class="btn-action mt-4 px-4 py-1.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-xs text-slate-300 hover:text-white border border-white/10 hidden pointer-events-auto">Cancel Waiting</button>
   </div>
 
-  <!-- MULTI-ACCOUNT SIGN OUT MODAL -->
+  <!-- Sign Out Modal -->
   <div id="signout-modal" onclick="handleModalBackdropClick(event)" class="fixed inset-0 z-50 flex items-center justify-center bg-slate-950/80 backdrop-blur-md transition-opacity duration-200 opacity-0 pointer-events-none p-4">
-    <div id="signout-modal-card" class="relative w-full max-w-md glass-card rounded-3xl p-6 border border-white/10 shadow-2xl space-y-5 transform transition-all duration-200 scale-95">
+    <div id="signout-modal-card" class="relative w-full max-w-md glass-card rounded-3xl p-6 border border-white/10 shadow-2xl space-y-4">
       <div class="flex items-center justify-between pb-3 border-b border-white/[0.06]">
         <div class="flex items-center gap-2.5">
-          <div class="w-8 h-8 rounded-xl bg-rose-500/10 border border-rose-500/20 text-rose-400 flex items-center justify-center">
+          <div class="w-8 h-8 rounded-xl bg-rose-500/10 border border-rose-500/20 text-rose-400 flex items-center justify-center shrink-0">
             <i data-lucide="log-out" class="w-4 h-4"></i>
           </div>
           <div>
-            <h3 class="text-sm font-bold text-white tracking-tight">Manage Connected Accounts</h3>
-            <p class="text-[11px] text-slate-400">Sign out individual accounts without losing active session state</p>
+            <h3 class="text-sm font-bold text-white tracking-tight">Manage Accounts</h3>
+            <p class="text-[11px] text-slate-400">Disconnect accounts or sign out completely</p>
           </div>
         </div>
-        <button onclick="closeSignOutModal()" class="text-slate-400 hover:text-white p-1 rounded-lg transition" title="Close">
+        <button onclick="closeSignOutModal()" class="text-slate-400 hover:text-white p-1 rounded-lg">
           <i data-lucide="x" class="w-4 h-4"></i>
         </button>
       </div>
 
-      <!-- Account List -->
-      <div id="signout-accounts-list" class="space-y-2.5 max-h-64 overflow-y-auto pr-1">
+      <div id="signout-accounts-list" class="space-y-2.5 overflow-y-auto pr-1 max-h-60">
         <div class="p-4 text-center text-xs text-slate-400">Loading accounts...</div>
       </div>
 
-      <div class="flex items-center justify-between pt-3 border-t border-white/[0.06] text-xs">
-        <span class="text-[11px] text-slate-400">Signing out all accounts redirects to login</span>
-        <button onclick="closeSignOutModal()" class="px-3.5 py-1.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 font-semibold transition active:scale-95">
-          Done
+      <div class="pt-3 border-t border-white/[0.06] flex items-center justify-between">
+        <button onclick="handleFullSignOut()" class="btn-action px-3 py-1.5 rounded-xl bg-rose-600/20 hover:bg-rose-600/30 text-rose-300 border border-rose-500/30 text-xs font-semibold flex items-center gap-1.5">
+          <i data-lucide="power" class="w-3.5 h-3.5"></i>
+          <span>Sign Out of All</span>
         </button>
+        <button onclick="closeSignOutModal()" class="btn-action px-4 py-1.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-semibold">Close</button>
       </div>
     </div>
   </div>
 
-  <div class="aurora-container">
-    <div class="aurora-blob blob-1"></div>
-    <div class="aurora-blob blob-2"></div>
-    <div class="aurora-blob blob-3"></div>
-  </div>
-
-  <div class="relative z-10 flex flex-col min-h-screen">
-    <!-- Header -->
-    <header class="border-b border-white/[0.06] bg-slate-950/40 backdrop-blur-xl sticky top-0 z-40 px-6 sm:px-10 py-3.5 flex items-center justify-between">
-      <div class="flex items-center gap-3.5">
-        <div class="w-10 h-10 rounded-2xl bg-indigo-600/20 border border-indigo-400/30 text-indigo-300 flex items-center justify-center shadow-inner">
-          <i data-lucide="sparkles" class="w-5 h-5"></i>
+  <!-- Sidebar -->
+  <aside class="w-[235px] min-w-[235px] bg-[#060911] border-r border-white/[0.07] flex flex-col justify-between p-5 z-20">
+    <div>
+      <!-- Brand Header -->
+      <div class="flex items-center gap-3.5 px-1 pb-6 mb-2 border-b border-white/[0.04]">
+        <img 
+          src="/logo.png" 
+          alt="EMA Logo" 
+          class="w-11 h-11 rounded-2xl object-cover shadow-lg shadow-blue-500/25 border border-white/10 shrink-0"
+          onerror="this.style.display='none'; document.getElementById('brand-fallback-icon').style.display='flex';"
+        />
+        <div id="brand-fallback-icon" class="hidden w-11 h-11 rounded-2xl bg-gradient-to-br from-blue-500 to-indigo-600 items-center justify-center shadow-lg shadow-blue-500/25 text-white shrink-0">
+          <i data-lucide="mail" class="w-5 h-5"></i>
         </div>
-        <div>
-          <h1 class="text-base font-semibold text-white tracking-tight">Smart Universal Email Assistant</h1>
-          <p class="text-xs text-slate-400">Multi-Account Inbox Automation & Real-Time Sync</p>
+        <div class="overflow-hidden leading-none">
+          <div class="flex items-baseline">
+            <span class="text-2xl font-black text-white tracking-wider">EM</span>
+            <span class="text-2xl font-black bg-gradient-to-tr from-cyan-400 to-indigo-400 bg-clip-text text-transparent tracking-wider">A</span>
+          </div>
+          <span class="text-[11px] text-slate-400 font-semibold tracking-tight block mt-1">EmailAutomater</span>
+          <span class="text-[8.5px] text-slate-500 font-medium tracking-widest uppercase block mt-0.5">Let AI Handle Your Emails</span>
         </div>
       </div>
 
-      <!-- Header Right Controls -->
-      <div class="flex items-center gap-2.5 sm:gap-3">
-        <!-- User Badge -->
-        <div id="auth-container" class="relative">
-          <div class="h-9 w-32 bg-slate-800/40 rounded-xl animate-pulse"></div>
-        </div>
-
-        <button onclick="triggerAddAccount()" class="flex items-center gap-1.5 px-3 py-2 rounded-xl bg-indigo-600/20 hover:bg-indigo-600/30 border border-indigo-500/30 text-indigo-300 hover:text-white text-xs font-semibold transition active:scale-95 shadow-sm">
-          <i data-lucide="user-plus" class="w-3.5 h-3.5"></i>
-          <span class="hidden sm:inline">Add Account</span>
+      <!-- Navigation -->
+      <nav class="space-y-1">
+        <button onclick="switchTab('tab-dashboard')" id="btn-tab-dashboard" class="nav-btn w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-xs font-semibold bg-slate-800/90 text-white shadow-inner">
+          <i data-lucide="layout-dashboard" class="w-4 h-4 text-blue-400"></i>
+          <span>Dashboard</span>
         </button>
 
-        <!-- Live Status Pill -->
-        <div class="hidden sm:flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-slate-900/60 border border-white/5 text-xs font-medium">
-          <span id="worker-pulse" class="relative flex h-2.5 w-2.5">
-            <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
-            <span class="relative inline-flex rounded-full h-2.5 w-2.5 bg-emerald-500"></span>
-          </span>
-          <span id="worker-status-text" class="text-emerald-300 font-semibold tracking-wide uppercase text-[11px]">Live</span>
-        </div>
-
-        <!-- Worker Power Toggle -->
-        <button id="btn-toggle-worker" onclick="toggleWorker()" class="flex items-center gap-2 text-xs font-semibold bg-indigo-600 hover:bg-indigo-500 text-white px-3.5 sm:px-4 py-2 rounded-xl transition shadow-lg shadow-indigo-600/20 active:scale-95">
-          <i data-lucide="power" class="w-3.5 h-3.5"></i>
-          <span id="btn-worker-label" class="hidden sm:inline">Turn Off</span>
+        <button onclick="switchTab('tab-accounts')" id="btn-tab-accounts" class="nav-btn w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-xs font-semibold text-slate-400 hover:text-white hover:bg-white/[0.04]">
+          <i data-lucide="users" class="w-4 h-4"></i>
+          <span>Accounts</span>
         </button>
 
-        <!-- Settings Dropdown -->
-        <div class="relative" id="settings-wrapper">
-          <button id="btn-settings-toggle" onclick="toggleSettingsMenu(event)" class="flex items-center gap-1.5 px-3 py-2 rounded-xl bg-slate-900/80 hover:bg-slate-800 border border-white/10 text-slate-300 hover:text-white transition active:scale-95 shadow-md">
-            <i data-lucide="settings" class="w-4 h-4 text-indigo-400"></i>
-            <span class="text-xs font-semibold">Settings</span>
+        <button onclick="switchTab('tab-logs')" id="btn-tab-logs" class="nav-btn w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-xs font-semibold text-slate-400 hover:text-white hover:bg-white/[0.04]">
+          <i data-lucide="terminal" class="w-4 h-4"></i>
+          <span>Logs</span>
+        </button>
+
+        <button onclick="switchTab('tab-calendar')" id="btn-tab-calendar" class="nav-btn w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-xs font-semibold text-slate-400 hover:text-white hover:bg-white/[0.04]">
+          <i data-lucide="calendar" class="w-4 h-4"></i>
+          <span>Calendar</span>
+        </button>
+
+        <button onclick="switchTab('tab-drive')" id="btn-tab-drive" class="nav-btn w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-xs font-semibold text-slate-400 hover:text-white hover:bg-white/[0.04]">
+          <i data-lucide="hard-drive" class="w-4 h-4"></i>
+          <span>Drive</span>
+        </button>
+
+        <button onclick="switchTab('tab-settings')" id="btn-tab-settings" class="nav-btn w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-xs font-semibold text-slate-400 hover:text-white hover:bg-white/[0.04]">
+          <i data-lucide="settings" class="w-4 h-4"></i>
+          <span>Settings</span>
+        </button>
+      </nav>
+    </div>
+
+    <!-- System Status Footer -->
+    <div class="p-3.5 rounded-2xl bg-white/[0.02] border border-white/[0.07] space-y-1">
+      <div class="flex items-center gap-2">
+        <span id="sidebar-worker-dot" class="w-2 h-2 rounded-full bg-emerald-400 shadow-[0_0_8px_#34d399] animate-pulse"></span>
+        <span id="sidebar-worker-status" class="text-xs font-bold text-white tracking-wide">Running</span>
+      </div>
+      <p id="sidebar-accounts-count" class="text-[11px] text-slate-400">Monitoring accounts</p>
+      <div class="text-[10px] text-slate-500 font-mono pt-1">v2.0.0</div>
+    </div>
+  </aside>
+
+  <!-- Main View Area -->
+  <div class="flex-1 flex flex-col h-screen overflow-y-auto z-10 bg-[#0a0e1a]">
+    <header class="px-8 pt-7 pb-4 flex items-center justify-between gap-4 border-b border-white/[0.04]">
+      <div>
+        <h2 id="greeting-heading" class="text-xl font-bold text-white tracking-tight">Good Evening!</h2>
+        <p class="text-xs text-slate-400 mt-0.5">Your emails are being processed automatically.</p>
+      </div>
+
+      <div class="flex items-center gap-3">
+        <button onclick="toggleWorker()" class="btn-action flex items-center gap-2 px-3.5 py-2 rounded-full glass-card border border-white/[0.08] hover:border-white/20 text-xs text-slate-300">
+          <span id="header-worker-dot" class="w-2 h-2 rounded-full bg-emerald-400 shadow-[0_0_6px_#34d399] animate-pulse"></span>
+          <span class="text-slate-400">System Status</span>
+          <span id="header-worker-text" class="font-bold text-white uppercase text-[11px]">Running</span>
+        </button>
+
+        <div class="relative" id="user-menu-wrapper">
+          <button onclick="toggleUserMenu(event)" class="btn-action flex items-center gap-2.5 px-3 py-1.5 rounded-full glass-card border border-white/[0.08] hover:border-blue-500/40">
+            <div id="header-avatar" class="w-6 h-6 rounded-full bg-gradient-to-tr from-blue-600 to-indigo-500 flex items-center justify-center text-[11px] font-bold text-white shadow-sm">
+              U
+            </div>
+            <span id="header-email" class="text-xs text-slate-200 font-medium truncate max-w-[160px]">Loading...</span>
+            <i data-lucide="chevron-down" class="w-3.5 h-3.5 text-slate-400"></i>
           </button>
 
-          <div id="settings-menu" class="hidden absolute right-0 mt-2.5 w-80 sm:w-[420px] glass-card rounded-3xl p-5 border border-white/10 shadow-2xl backdrop-blur-2xl z-50 space-y-4 max-h-[85vh] overflow-y-auto">
-            <div class="flex items-center justify-between pb-3 border-b border-white/[0.06]">
-              <div class="flex items-center gap-2">
-                <i data-lucide="sliders" class="w-4 h-4 text-indigo-400"></i>
-                <h4 class="text-xs font-bold uppercase tracking-wider text-white">Assistant Settings</h4>
-              </div>
-              <button onclick="toggleSettingsMenu(event)" class="text-slate-400 hover:text-white p-1 rounded-lg">
-                <i data-lucide="x" class="w-4 h-4"></i>
-              </button>
+          <div id="user-dropdown-menu" class="hidden absolute right-0 mt-2 w-56 glass-card rounded-2xl shadow-2xl p-2 border border-white/10 z-50">
+            <div class="px-3 py-2 border-b border-white/5 mb-1">
+              <p class="text-[10px] text-slate-400">Signed in</p>
+              <p id="dropdown-user-email" class="text-xs font-semibold text-white truncate"></p>
             </div>
-
-            <!-- Setting 1: Only remind when files available -->
-            <div class="p-4 rounded-2xl bg-slate-950/60 border border-white/5 space-y-3">
-              <div class="space-y-1">
-                <div class="flex items-center gap-1.5">
-                  <i data-lucide="paperclip" class="w-3.5 h-3.5 text-indigo-400"></i>
-                  <span class="text-xs font-semibold text-slate-100 leading-snug">Only set reminders when files are available</span>
-                </div>
-                <p class="text-[11px] text-slate-400 leading-relaxed">
-                  Only schedules calendar reminders if the email contains at least one attached document.
-                </p>
-              </div>
-
-              <div class="flex items-center justify-between pt-2 border-t border-white/5">
-                <span id="file-setting-status-badge" class="text-[11px] font-semibold text-slate-400">Disabled</span>
-                <button id="btn-file-toggle" onclick="toggleOnlyFilesSetting()" class="relative inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full border-2 border-transparent bg-slate-700 transition-colors duration-200 ease-in-out focus:outline-none">
-                  <span id="btn-file-toggle-circle" class="translate-x-0 pointer-events-none inline-block h-5 w-5 transform rounded-full bg-white shadow ring-0 transition duration-200 ease-in-out"></span>
-                </button>
-              </div>
-            </div>
-
-            <!-- Setting 2: Design your events -->
-            <div class="p-4 rounded-2xl bg-slate-950/60 border border-white/5 space-y-3">
-              <div class="space-y-1">
-                <div class="flex items-center gap-1.5">
-                  <i data-lucide="wand-2" class="w-3.5 h-3.5 text-purple-400"></i>
-                  <span class="text-xs font-semibold text-slate-100 leading-snug">Design your events</span>
-                </div>
-                <p class="text-[11px] text-slate-400 leading-relaxed">
-                  Provide custom instructions for the AI to ignore, prioritize, or process specific emails.
-                </p>
-              </div>
-
-              <div class="flex items-center justify-between pt-2 border-t border-white/5">
-                <span id="design-setting-status-badge" class="text-[11px] font-semibold text-slate-400">Turned Off</span>
-                <button id="btn-design-toggle" onclick="toggleDesignEventsSetting()" class="relative inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full border-2 border-transparent bg-slate-700 transition-colors duration-200 ease-in-out focus:outline-none">
-                  <span id="btn-design-toggle-circle" class="translate-x-0 pointer-events-none inline-block h-5 w-5 transform rounded-full bg-white shadow ring-0 transition duration-200 ease-in-out"></span>
-                </button>
-              </div>
-
-              <div id="design-prompt-container" class="hidden pt-3 border-t border-white/5 space-y-2.5">
-                <label class="block text-[11px] font-semibold text-indigo-300">Custom Filtering Instructions:</label>
-                <textarea id="design-prompt-input" rows="3" class="w-full bg-slate-900 border border-white/10 rounded-xl p-2.5 text-xs text-slate-200 placeholder-slate-500 focus:border-indigo-500 focus:outline-none transition resize-none" placeholder="e.g. Ignore emails from notifications@service.com; prioritize university deadlines..."></textarea>
-                <div class="flex items-center justify-between">
-                  <span id="design-save-feedback" class="text-[10px] text-emerald-400 opacity-0 transition-opacity">Saved to prompt!</span>
-                  <button id="btn-save-design-prompt" onclick="saveDesignPrompt()" class="px-3 py-1.5 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-semibold transition active:scale-95 shadow-md shadow-indigo-600/20">
-                    Save Instructions
-                  </button>
-                </div>
-              </div>
-            </div>
-
-            <!-- Setting 3: AI Spam & Scam Protection with User Threshold Control -->
-            <div class="p-4 rounded-2xl bg-slate-950/60 border border-white/5 space-y-3">
-              <div class="flex items-center justify-between">
-                <div class="flex items-center gap-1.5">
-                  <i data-lucide="shield-alert" class="w-3.5 h-3.5 text-rose-400"></i>
-                  <span class="text-xs font-semibold text-slate-100 leading-snug">AI Spam & Scam Protection</span>
-                </div>
-                <button id="btn-spam-toggle" onclick="toggleSpamProtectionSetting()" class="relative inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full border-2 border-transparent bg-indigo-600 transition-colors duration-200 ease-in-out focus:outline-none shadow-md shadow-indigo-600/30">
-                  <span id="btn-spam-toggle-circle" class="translate-x-5 pointer-events-none inline-block h-5 w-5 transform rounded-full bg-white shadow ring-0 transition duration-200 ease-in-out"></span>
-                </button>
-              </div>
-
-              <p class="text-[11px] text-slate-400 leading-relaxed">
-                Filters emails identified as spam or phishing with probability &ge; <span id="spam-desc-pct" class="font-bold text-rose-300">50%</span>.
-              </p>
-
-              <!-- Threshold Slider & Controls -->
-              <div class="pt-2 border-t border-white/5 space-y-2">
-                <div class="flex justify-between items-center text-xs">
-                  <span class="text-slate-400 text-[11px]">Sensitivity Threshold:</span>
-                  <span id="spam-threshold-badge" class="px-2 py-0.5 rounded-md bg-rose-500/20 text-rose-300 font-mono font-bold text-[11px]">50%</span>
-                </div>
-                <input 
-                  type="range" 
-                  id="spam-threshold-slider" 
-                  min="20" 
-                  max="90" 
-                  step="5" 
-                  value="50" 
-                  oninput="onSpamThresholdSlider(this.value)" 
-                  onchange="saveSpamThreshold(this.value)"
-                  class="w-full h-1.5 bg-slate-800 rounded-lg appearance-none cursor-pointer accent-rose-500"
-                >
-                <div class="flex justify-between text-[9px] text-slate-500 font-mono">
-                  <span>20% (Strictest)</span>
-                  <span>50% (Default)</span>
-                  <span>90% (Permissive)</span>
-                </div>
-              </div>
-            </div>
-
-            <!-- Setting 4: Default Timing -->
-            <div class="p-4 rounded-2xl bg-slate-950/60 border border-white/5 space-y-3">
-              <div class="space-y-1">
-                <div class="flex items-center gap-1.5">
-                  <i data-lucide="clock-3" class="w-3.5 h-3.5 text-amber-400"></i>
-                  <span class="text-xs font-semibold text-slate-100 leading-snug">Default Timings</span>
-                </div>
-                <p class="text-[11px] text-slate-400 leading-relaxed">
-                  Used when an email or file specifies a date or deadline without an exact hour. Preset to 9:00 AM.
-                </p>
-              </div>
-
-              <div class="flex items-center justify-between pt-2 border-t border-white/5">
-                <div class="flex items-center gap-2">
-                  <input type="time" id="default-timing-input" value="09:00" class="bg-slate-900 border border-white/10 rounded-xl px-3 py-1.5 text-xs text-white font-mono outline-none focus:border-indigo-500 cursor-pointer transition">
-                  <span id="timing-saved-badge" class="text-[10px] text-emerald-400 opacity-0 transition-opacity">Saved</span>
-                </div>
-                <button onclick="saveDefaultTiming()" class="px-3 py-1.5 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-semibold transition active:scale-95 shadow-md shadow-indigo-600/20">
-                  Set Time
-                </button>
-              </div>
-            </div>
-
-            <p class="text-[10px] text-slate-400 text-center">Settings persist across server restarts.</p>
+            <button onclick="triggerAddAccount()" class="w-full flex items-center gap-2 px-3 py-2 text-xs text-slate-300 hover:text-white hover:bg-white/5 rounded-xl text-left">
+              <i data-lucide="user-plus" class="w-4 h-4 text-blue-400"></i>
+              <span>Add Account</span>
+            </button>
+            <button onclick="openSignOutModal()" class="w-full flex items-center gap-2 px-3 py-2 text-xs text-slate-300 hover:text-white hover:bg-white/5 rounded-xl text-left">
+              <i data-lucide="users" class="w-4 h-4 text-purple-400"></i>
+              <span>Manage Inboxes...</span>
+            </button>
+            <button onclick="handleFullSignOut()" class="w-full flex items-center gap-2 px-3 py-2 text-xs text-rose-400 hover:bg-rose-500/10 rounded-xl text-left">
+              <i data-lucide="log-out" class="w-4 h-4"></i>
+              <span>Sign Out Completely</span>
+            </button>
           </div>
         </div>
-
       </div>
     </header>
 
-    <!-- Main Workspace -->
-    <main class="flex-1 max-w-6xl w-full mx-auto px-6 sm:px-10 py-8 space-y-8">
-
-      <!-- Connected Accounts Space -->
-      <section class="glass-card rounded-3xl p-6 border border-white/10 space-y-4">
-        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-          <div class="flex items-center gap-3">
-            <div class="w-9 h-9 rounded-2xl bg-indigo-600/20 border border-indigo-400/30 text-indigo-300 flex items-center justify-center">
-              <i data-lucide="users" class="w-4 h-4"></i>
+    <main class="flex-1 px-8 py-6 flex flex-col justify-between max-w-7xl w-full mx-auto">
+      <!-- TAB 1: DASHBOARD -->
+      <section id="tab-dashboard" class="space-y-6 tab-content-pane flex-1 flex flex-col">
+        <div class="grid grid-cols-4 gap-4">
+          <div class="glass-card rounded-2xl p-4 flex items-center gap-4">
+            <div class="w-11 h-11 rounded-xl bg-blue-500/15 border border-blue-500/20 text-blue-400 flex items-center justify-center shrink-0">
+              <i data-lucide="mail" class="w-5 h-5"></i>
             </div>
             <div>
-              <h3 class="text-sm font-bold text-white tracking-tight">Connected Accounts & Inboxes</h3>
-              <p class="text-xs text-slate-400">Include or exclude specific Google accounts from active background monitoring.</p>
+              <h3 id="kpi-total" class="text-2xl font-bold text-white leading-tight">0</h3>
+              <p class="text-[11.5px] text-slate-400">Emails Processed Today</p>
             </div>
           </div>
-          <button onclick="triggerAddAccount()" class="flex items-center gap-2 px-4 py-2 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white font-semibold text-xs transition shadow-lg shadow-indigo-600/20 active:scale-95 w-fit">
-            <i data-lucide="plus" class="w-4 h-4"></i>
-            <span>Add Another Google Account</span>
-          </button>
-        </div>
 
-        <div id="accounts-container" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3 pt-2">
-          <div class="p-4 rounded-2xl bg-slate-900/40 border border-white/5 animate-pulse text-xs text-slate-400">Loading accounts...</div>
-        </div>
-      </section>
-
-      <!-- KPI Metrics Cards -->
-      <section class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-        <div class="glass-card rounded-2xl p-5">
-          <div class="flex items-center justify-between text-slate-400 text-xs font-medium uppercase tracking-wider">
-            <span>Emails Analyzed</span>
-            <i data-lucide="mail" class="w-4 h-4 text-blue-400"></i>
-          </div>
-          <div class="mt-3 flex items-baseline gap-2">
-            <span id="kpi-total" class="text-3xl font-bold text-white">0</span>
-            <span class="text-xs text-slate-400">scanned</span>
-          </div>
-        </div>
-
-        <div class="glass-card rounded-2xl p-5">
-          <div class="flex items-center justify-between text-slate-400 text-xs font-medium uppercase tracking-wider">
-            <span>Actions Handled</span>
-            <i data-lucide="check-circle-2" class="w-4 h-4 text-emerald-400"></i>
-          </div>
-          <div class="mt-3 flex items-baseline gap-2">
-            <span id="kpi-actioned" class="text-3xl font-bold text-emerald-400">0</span>
-            <span class="text-xs text-emerald-400">events & tasks</span>
-          </div>
-        </div>
-
-        <div class="glass-card rounded-2xl p-5">
-          <div class="flex items-center justify-between text-slate-400 text-xs font-medium uppercase tracking-wider">
-            <span>Organized & Noted</span>
-            <i data-lucide="layers" class="w-4 h-4 text-purple-400"></i>
-          </div>
-          <div class="mt-3 flex items-baseline gap-2">
-            <span id="kpi-processed" class="text-3xl font-bold text-purple-300">0</span>
-            <span class="text-xs text-purple-400">updates logged</span>
-          </div>
-        </div>
-
-        <div class="glass-card rounded-2xl p-5">
-          <div class="flex items-center justify-between text-slate-400 text-xs font-medium uppercase tracking-wider">
-            <span>Time Saved</span>
-            <i data-lucide="clock" class="w-4 h-4 text-indigo-400"></i>
-          </div>
-          <div class="mt-3 flex items-baseline gap-2">
-            <span id="kpi-time" class="text-3xl font-bold text-indigo-300">0</span>
-            <span class="text-xs text-indigo-400">minutes saved</span>
-          </div>
-        </div>
-      </section>
-
-      <!-- Navigation Tabs -->
-      <div class="flex flex-wrap gap-2 p-1.5 rounded-2xl bg-slate-950/40 border border-white/5 backdrop-blur-xl w-fit">
-        <button onclick="switchTab('tab-feed')" id="btn-tab-feed" class="flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-semibold bg-indigo-600 text-white shadow-md transition-all">
-          <i data-lucide="inbox" class="w-3.5 h-3.5"></i>
-          <span>Universal Inbox Activity</span>
-        </button>
-        <button onclick="switchTab('tab-calendar')" id="btn-tab-calendar" class="flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-semibold text-slate-400 hover:text-white transition-all">
-          <i data-lucide="calendar" class="w-3.5 h-3.5"></i>
-          <span>Calendar & Deadlines</span>
-        </button>
-        <button onclick="switchTab('tab-logs')" id="btn-tab-logs" class="flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-semibold text-slate-400 hover:text-white transition-all">
-          <i data-lucide="activity" class="w-3.5 h-3.5"></i>
-          <span>Live Updates</span>
-        </button>
-        <button onclick="switchTab('tab-inspect')" id="btn-tab-inspect" class="flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-semibold text-slate-400 hover:text-white transition-all">
-          <i data-lucide="search-check" class="w-3.5 h-3.5 text-indigo-400"></i>
-          <span>Inspect Previous Mails</span>
-        </button>
-      </div>
-
-      <!-- TAB 1: Universal Activity Feed -->
-      <section id="tab-feed" class="space-y-4">
-        <div class="flex flex-wrap gap-2 justify-between items-center">
-          <div class="flex flex-wrap gap-1.5 p-1 rounded-xl bg-slate-950/40 border border-white/5 text-xs">
-            <button onclick="filterFeed('ALL', this)" class="feed-btn px-3 py-1.5 rounded-lg font-medium bg-indigo-600 text-white">All Emails</button>
-            <button onclick="filterFeed('Meeting & Event', this)" class="feed-btn px-3 py-1.5 rounded-lg font-medium text-slate-400 hover:text-white">Meetings & Events</button>
-            <button onclick="filterFeed('Task & Deadline', this)" class="feed-btn px-3 py-1.5 rounded-lg font-medium text-slate-400 hover:text-white">Tasks & Deadlines</button>
-            <button onclick="filterFeed('Important Update', this)" class="feed-btn px-3 py-1.5 rounded-lg font-medium text-slate-400 hover:text-white">Important Updates</button>
-            <button onclick="filterFeed('General / Marketing', this)" class="feed-btn px-3 py-1.5 rounded-lg font-medium text-slate-400 hover:text-white">Low Priority</button>
-            <button onclick="filterFeed('Spam / Scam', this)" class="feed-btn px-3 py-1.5 rounded-lg font-medium text-rose-400 hover:text-white">Spam / Scam</button>
-          </div>
-          <button onclick="loadFeed()" class="flex items-center gap-1.5 text-xs text-indigo-300 hover:text-indigo-200 transition">
-            <i data-lucide="rotate-cw" class="w-3.5 h-3.5"></i>
-            <span>Refresh</span>
-          </button>
-        </div>
-
-        <div class="glass-card rounded-2xl overflow-hidden">
-          <table class="w-full text-left text-xs">
-            <thead class="bg-white/[0.02] text-slate-400 uppercase text-[10px] tracking-wider border-b border-white/[0.06]">
-              <tr>
-                <th class="py-3.5 px-4 whitespace-nowrap">Account Inbox</th>
-                <th class="py-3.5 px-4 whitespace-nowrap">Category</th>
-                <th class="py-3.5 px-4">Subject & Sender</th>
-                <th class="py-3.5 px-4">Executive AI Summary</th>
-                <th class="py-3.5 px-4 whitespace-nowrap">Action Taken</th>
-                <th class="py-3.5 px-4 whitespace-nowrap">Time</th>
-              </tr>
-            </thead>
-            <tbody id="feed-tbody" class="divide-y divide-white/[0.04]">
-              <tr><td colspan="6" class="py-10 text-center text-slate-400">Loading your emails...</td></tr>
-            </tbody>
-          </table>
-        </div>
-      </section>
-
-      <!-- TAB 2: Calendar & Deadlines -->
-      <section id="tab-calendar" class="hidden space-y-4">
-        <div class="flex justify-between items-center">
-          <p class="text-sm font-medium text-slate-300">Upcoming events across all monitored accounts:</p>
-          <button onclick="loadCalendarEvents()" class="flex items-center gap-1.5 text-xs text-indigo-300 hover:text-indigo-200 transition">
-            <i data-lucide="rotate-cw" class="w-3.5 h-3.5"></i>
-            <span>Sync</span>
-          </button>
-        </div>
-        <div id="calendar-cards" class="grid grid-cols-1 md:grid-cols-2 gap-4"></div>
-      </section>
-
-      <!-- TAB 3: Live Logs -->
-      <section id="tab-logs" class="hidden space-y-3">
-        <div class="flex items-center justify-between">
-          <div class="flex items-center gap-2">
-            <span class="relative flex h-2 w-2">
-              <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
-              <span class="relative inline-flex rounded-full h-2.5 w-2.5 bg-emerald-500"></span>
-            </span>
-            <span class="text-xs text-slate-400">Live multi-inbox background process monitor</span>
-          </div>
-          <button onclick="document.getElementById('log-terminal').innerHTML = ''" class="text-xs text-slate-400 hover:text-slate-200 transition">Clear</button>
-        </div>
-        <div id="log-terminal" class="glass-card rounded-2xl p-5 text-xs text-slate-300 h-[500px] overflow-y-auto space-y-1.5 bg-slate-950/70 font-mono">
-          <div class="text-slate-400">Connecting to assistant feed...</div>
-        </div>
-      </section>
-
-      <!-- TAB 4: Inspect Previous Mails -->
-      <section id="tab-inspect" class="hidden space-y-6">
-        <div class="glass-card rounded-3xl p-6 sm:p-8 space-y-6 border border-white/10">
-          <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-6 border-b border-white/[0.06]">
-            <div class="flex items-center gap-3">
-              <div class="w-10 h-10 rounded-2xl bg-indigo-600/20 border border-indigo-400/30 text-indigo-300 flex items-center justify-center">
-                <i data-lucide="search-check" class="w-5 h-5"></i>
-              </div>
-              <div>
-                <h3 class="text-base font-semibold text-white">Inspect Previous Mails</h3>
-                <p class="text-xs text-slate-400">Scans historical unprocessed emails across all enabled inboxes.</p>
-              </div>
+          <div class="glass-card rounded-2xl p-4 flex items-center gap-4">
+            <div class="w-11 h-11 rounded-xl bg-rose-500/15 border border-rose-500/20 text-rose-400 flex items-center justify-center shrink-0">
+              <i data-lucide="calendar" class="w-5 h-5"></i>
             </div>
-
-            <span class="px-3 py-1 rounded-full text-[11px] font-semibold bg-indigo-500/10 text-indigo-300 border border-indigo-500/20 w-fit">
-              Maximum safety cap: 40 emails
-            </span>
+            <div>
+              <h3 id="kpi-actioned" class="text-2xl font-bold text-white leading-tight">0</h3>
+              <p class="text-[11.5px] text-slate-400">Events Scheduled</p>
+            </div>
           </div>
 
-          <!-- Controls -->
-          <div class="grid grid-cols-1 md:grid-cols-2 gap-6 items-center">
-            <div class="space-y-2">
-              <label class="block text-xs font-semibold uppercase tracking-wider text-slate-400">Number of Unprocessed Emails</label>
-              <div class="relative">
-                <select id="inspect-count-select" class="w-full appearance-none bg-slate-950/80 border border-white/10 rounded-2xl px-4 py-3 text-xs text-slate-200 outline-none focus:border-indigo-500 transition cursor-pointer">
-                  <option value="10">10 Unprocessed Emails</option>
-                  <option value="20">20 Unprocessed Emails</option>
-                  <option value="30">30 Unprocessed Emails</option>
-                  <option value="40" selected>40 Unprocessed Emails (Max limit)</option>
-                </select>
-                <i data-lucide="chevron-down" class="w-4 h-4 text-slate-400 absolute right-4 top-3.5 pointer-events-none"></i>
-              </div>
-              <p class="text-[11px] text-slate-400">Previously processed emails are automatically skipped.</p>
+          <div class="glass-card rounded-2xl p-4 flex items-center gap-4">
+            <div class="w-11 h-11 rounded-xl bg-emerald-500/15 border border-emerald-500/20 text-emerald-400 flex items-center justify-center shrink-0">
+              <i data-lucide="hard-drive" class="w-5 h-5"></i>
             </div>
+            <div>
+              <h3 id="kpi-attachments" class="text-2xl font-bold text-white leading-tight">0</h3>
+              <p class="text-[11.5px] text-slate-400">Attachments Saved</p>
+            </div>
+          </div>
 
-            <div class="space-y-2">
-              <label class="block text-xs font-semibold uppercase tracking-wider text-slate-400">Inspector Control</label>
-              <button id="btn-inspect-toggle" onclick="toggleInspect()" class="w-full py-3 px-6 rounded-2xl bg-indigo-600 hover:bg-indigo-500 text-white font-semibold text-xs transition flex items-center justify-center gap-2 shadow-lg shadow-indigo-600/20 active:scale-95">
-                <i data-lucide="play" class="w-4 h-4"></i>
-                <span id="inspect-btn-label">Turn On (Start Inspection)</span>
+          <div class="glass-card rounded-2xl p-4 flex items-center gap-4">
+            <div class="w-11 h-11 rounded-xl bg-purple-500/15 border border-purple-500/20 text-purple-400 flex items-center justify-center shrink-0">
+              <i data-lucide="users" class="w-5 h-5"></i>
+            </div>
+            <div>
+              <h3 id="kpi-accounts-active" class="text-2xl font-bold text-white leading-tight">0</h3>
+              <p class="text-[11.5px] text-slate-400">Accounts Active</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="grid grid-cols-2 gap-5 flex-1 min-h-[360px]">
+          <div class="glass-card rounded-2xl p-5 flex flex-col justify-between">
+            <div>
+              <div class="flex items-center justify-between pb-3 border-b border-white/[0.06] mb-3">
+                <span class="text-sm font-bold text-white">Recent Activity</span>
+                <button onclick="switchTab('tab-logs')" class="text-xs font-semibold text-blue-400 hover:text-blue-300">View All &rarr;</button>
+              </div>
+              <div id="recent-activity-list" class="space-y-2.5 overflow-y-auto max-h-[290px] pr-1"></div>
+            </div>
+          </div>
+
+          <div class="glass-card rounded-2xl p-5 flex flex-col justify-between">
+            <div>
+              <div class="flex items-center justify-between pb-3 border-b border-white/[0.06] mb-3">
+                <span class="text-sm font-bold text-white">Upcoming Events</span>
+                <button onclick="switchTab('tab-calendar')" class="text-xs font-semibold text-blue-400 hover:text-blue-300">View Calendar &rarr;</button>
+              </div>
+              <div id="upcoming-events-list" class="space-y-2.5 overflow-y-auto max-h-[290px] pr-1"></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="text-center pt-2 pb-1">
+          <p class="text-xs text-slate-500 italic">&ldquo;A more organized you, one email at a time.&rdquo; <span class="text-slate-400 font-semibold not-italic">— EMA</span></p>
+        </div>
+      </section>
+
+      <!-- TAB 2: ACCOUNTS -->
+      <section id="tab-accounts" class="hidden space-y-4 tab-content-pane">
+        <div class="glass-card rounded-2xl p-6 space-y-4">
+          <div class="flex items-center justify-between pb-4 border-b border-white/[0.06]">
+            <div>
+              <h3 class="text-sm font-bold text-white">Connected Inboxes</h3>
+              <p class="text-xs text-slate-400">Toggle monitoring or add secondary Google accounts.</p>
+            </div>
+            <button onclick="triggerAddAccount()" class="btn-action flex items-center gap-2 px-4 py-2 rounded-xl bg-blue-600 hover:bg-blue-500 text-white text-xs font-semibold shadow-md">
+              <i data-lucide="plus" class="w-4 h-4"></i>
+              <span>Add Account</span>
+            </button>
+          </div>
+          <div id="accounts-container" class="grid grid-cols-2 gap-3.5">
+            <div class="p-4 text-xs text-slate-400">Loading accounts...</div>
+          </div>
+        </div>
+      </section>
+
+      <!-- TAB 3: LOGS -->
+      <section id="tab-logs" class="hidden space-y-3 tab-content-pane flex-1 flex flex-col">
+        <div class="glass-card rounded-2xl p-5 flex-1 flex flex-col">
+          <div class="flex items-center justify-between pb-3 border-b border-white/[0.06] mb-3">
+            <div class="flex items-center gap-2">
+              <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+              <span class="text-xs font-bold text-white">Real-Time Assistant Terminal</span>
+              <span class="text-[10px] text-slate-500 font-mono">[SSE Stream]</span>
+            </div>
+            <button onclick="clearTerminalLogs()" class="text-xs text-slate-400 hover:text-white px-2.5 py-1 rounded-lg bg-white/5 border border-white/5">Clear</button>
+          </div>
+          <div id="log-terminal" class="flex-1 bg-[#050811] rounded-xl p-4 font-mono text-xs overflow-y-auto space-y-1.5 text-slate-300 min-h-[380px] border border-white/5">
+            <div class="text-emerald-400">[Connected] Monitoring live email activity...</div>
+          </div>
+        </div>
+      </section>
+
+      <!-- TAB 4: CALENDAR -->
+      <section id="tab-calendar" class="hidden space-y-4 tab-content-pane">
+        <div class="glass-card rounded-2xl p-5 space-y-4">
+          <div class="flex items-center justify-between pb-3 border-b border-white/[0.06]">
+            <div>
+              <h3 class="text-sm font-bold text-white">Full Calendar Agenda</h3>
+              <p class="text-xs text-slate-400">All events synchronized with Google Calendar.</p>
+            </div>
+            <div class="flex items-center gap-4">
+              <div class="flex items-center gap-2">
+                <span id="calendar-filter-label" class="text-xs text-slate-300 font-medium">Assistant Events Only</span>
+                <button id="btn-calendar-all-toggle" onclick="toggleCalendarAllEvents()" class="relative inline-flex h-5 w-10 shrink-0 cursor-pointer rounded-full border-2 border-transparent bg-slate-700 transition-colors">
+                  <span id="btn-calendar-all-circle" class="translate-x-0 pointer-events-none inline-block h-4 w-4 transform rounded-full bg-white shadow transition"></span>
+                </button>
+              </div>
+              <button onclick="loadCalendarEvents()" class="btn-action flex items-center gap-1 text-xs text-blue-400 hover:text-blue-300 px-3 py-1.5 rounded-lg bg-blue-500/10 border border-blue-500/20">
+                <i data-lucide="rotate-cw" class="w-3.5 h-3.5"></i>
+                <span>Sync</span>
               </button>
-              <p class="text-[11px] text-slate-400">Click Turn Off anytime to stop immediately.</p>
+            </div>
+          </div>
+          <div id="calendar-cards" class="grid grid-cols-2 gap-3.5"></div>
+        </div>
+      </section>
+
+      <!-- TAB 5: DRIVE & INSPECT -->
+      <section id="tab-drive" class="hidden space-y-4 tab-content-pane">
+        <div class="glass-card rounded-2xl p-6 space-y-5">
+          <div class="pb-3 border-b border-white/[0.06]">
+            <h3 class="text-sm font-bold text-white">Inspect Previous Inbox Emails</h3>
+            <p class="text-xs text-slate-400">Scans historical unprocessed emails to find meetings and save attachments.</p>
+          </div>
+          <div class="grid grid-cols-2 gap-4 items-center">
+            <div>
+              <label class="block text-[11px] font-semibold text-slate-400 uppercase tracking-wider mb-1.5">Batch Size</label>
+              <select id="inspect-count-select" class="w-full bg-slate-900 border border-white/10 rounded-xl px-3 py-2 text-xs text-slate-200 outline-none">
+                <option value="10">10 Unprocessed Emails</option>
+                <option value="20">20 Unprocessed Emails</option>
+                <option value="30">30 Unprocessed Emails</option>
+                <option value="40" selected>40 Unprocessed Emails (Max)</option>
+              </select>
+            </div>
+            <div>
+              <label class="block text-[11px] font-semibold text-slate-400 uppercase tracking-wider mb-1.5">Action</label>
+              <button id="btn-inspect-toggle" onclick="toggleInspect()" class="btn-action w-full py-2 px-4 rounded-xl bg-blue-600 hover:bg-blue-500 text-white font-semibold text-xs flex items-center justify-center gap-2">
+                <i id="inspect-icon" data-lucide="play" class="w-4 h-4"></i>
+                <span id="inspect-btn-label">Start Scan</span>
+              </button>
+            </div>
+          </div>
+          <div class="p-3.5 rounded-xl bg-slate-900/60 border border-white/5 space-y-2">
+            <div class="flex justify-between text-xs">
+              <span class="text-slate-400">Status:</span>
+              <span id="inspect-status-text" class="text-slate-200 font-semibold">Ready to inspect</span>
+            </div>
+            <div class="w-full bg-white/5 rounded-full h-1.5 overflow-hidden">
+              <div id="inspect-progress-bar" class="h-full bg-gradient-to-r from-blue-500 to-emerald-400 rounded-full w-0 transition-all duration-300"></div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- TAB 6: SETTINGS -->
+      <section id="tab-settings" class="hidden space-y-4 tab-content-pane max-w-2xl">
+        <div class="glass-card rounded-2xl p-6 space-y-5">
+          <div class="pb-3 border-b border-white/[0.06]">
+            <h3 class="text-sm font-bold text-white">Assistant Configuration</h3>
+            <p class="text-xs text-slate-400">Fine-tune AI classification and timing defaults.</p>
+          </div>
+
+          <div class="flex items-center justify-between p-3.5 rounded-xl bg-slate-900/50 border border-white/5">
+            <div>
+              <span class="text-xs font-semibold text-white">Only Remind With Files</span>
+              <p class="text-[11px] text-slate-400">Schedules events only if the email contains document attachments.</p>
+            </div>
+            <button id="btn-file-toggle" onclick="toggleOnlyFilesSetting()" class="relative inline-flex h-5 w-10 shrink-0 cursor-pointer rounded-full border-2 border-transparent bg-slate-700 transition-colors">
+              <span id="btn-file-toggle-circle" class="translate-x-0 pointer-events-none inline-block h-4 w-4 transform rounded-full bg-white shadow transition"></span>
+            </button>
+          </div>
+
+          <div class="p-3.5 rounded-xl bg-slate-900/50 border border-white/5 space-y-2.5">
+            <div class="flex justify-between items-center">
+              <div>
+                <span class="text-xs font-semibold text-white">AI Spam Sensitivity</span>
+                <p class="text-[11px] text-slate-400">Threshold to filter promotional spam from your calendar.</p>
+              </div>
+              <span id="spam-threshold-badge" class="px-2 py-0.5 rounded-md bg-rose-500/20 text-rose-300 font-mono font-bold text-xs">50%</span>
+            </div>
+            <input type="range" id="spam-threshold-slider" min="20" max="90" step="5" value="50" oninput="onSpamThresholdSlider(this.value)" onchange="saveSpamThreshold(this.value)" class="w-full h-1.5 bg-slate-800 rounded-lg appearance-none cursor-pointer accent-blue-500">
+          </div>
+
+          <div class="p-3.5 rounded-xl bg-slate-900/50 border border-white/5 flex items-center justify-between">
+            <div>
+              <span class="text-xs font-semibold text-white">Default Event Time</span>
+              <p class="text-[11px] text-slate-400">Applied when emails provide a date without explicit hours.</p>
+            </div>
+            <div class="flex items-center gap-2">
+              <input type="time" id="default-timing-input" value="09:00" class="bg-slate-950 border border-white/10 rounded-lg px-2.5 py-1 text-xs text-white font-mono">
+              <button onclick="saveDefaultTiming()" class="btn-action px-3 py-1 rounded-lg bg-blue-600 hover:bg-blue-500 text-white text-xs font-semibold">Save</button>
             </div>
           </div>
 
-          <!-- Progress -->
-          <div class="p-5 rounded-2xl bg-slate-950/60 border border-white/5 space-y-3">
-            <div class="flex items-center justify-between text-xs">
-              <span class="text-slate-400 font-medium">Status:</span>
-              <span id="inspect-status-text" class="text-slate-300 font-semibold">Ready to inspect</span>
+          <div class="p-3.5 rounded-xl bg-slate-900/50 border border-white/5 space-y-2">
+            <div class="flex justify-between items-center">
+              <span class="text-xs font-semibold text-white">Custom AI Instructions</span>
+              <button id="btn-design-toggle" onclick="toggleDesignEventsSetting()" class="relative inline-flex h-5 w-10 shrink-0 cursor-pointer rounded-full border-2 border-transparent bg-slate-700 transition-colors">
+                <span id="btn-design-toggle-circle" class="translate-x-0 pointer-events-none inline-block h-4 w-4 transform rounded-full bg-white shadow transition"></span>
+              </button>
             </div>
-
-            <div class="w-full bg-white/5 rounded-full h-2 overflow-hidden border border-white/5">
-              <div id="inspect-progress-bar" class="h-full bg-gradient-to-r from-indigo-500 to-emerald-400 rounded-full w-0 transition-all duration-500"></div>
-            </div>
-
-            <div class="flex justify-between text-[11px] text-slate-400">
-              <span id="inspect-count-label">0 inspected</span>
-              <span id="inspect-target-label">Target: 40 emails max</span>
+            <textarea id="design-prompt-input" rows="2" class="w-full bg-slate-950 border border-white/10 rounded-xl p-2.5 text-xs text-slate-200 placeholder-slate-500 outline-none focus:border-blue-500 resize-none" placeholder="e.g. Always prioritize notices from my team as High Priority..."></textarea>
+            <div class="flex justify-end">
+              <button onclick="saveDesignPrompt()" class="btn-action px-3 py-1 rounded-lg bg-blue-600 hover:bg-blue-500 text-white text-xs font-semibold">Save Instructions</button>
             </div>
           </div>
         </div>
@@ -550,173 +497,135 @@
   </div>
 
   <script>
-    // Universal Dynamic Backend URL: Resolves correct endpoint across localhost and local network devices
-    const BACKEND_HOST = (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1')
-      ? '127.0.0.1'
-      : window.location.hostname;
-    const BACKEND_URL = `${window.location.protocol}//${BACKEND_HOST}:8000`;
+    const BACKEND_URL = window.location.origin;
 
-    // ----------------- Client-Side Encryption Layer (Web Crypto AES-GCM) ----------------- //
-    const EncryptedSession = {
-      _salt: new Uint8Array([77, 97, 105, 108, 65, 115, 115, 105, 115, 116, 97, 110, 116, 50, 48, 50]),
-      
-      async _getKey() {
-        const enc = new TextEncoder();
-        const baseKey = await crypto.subtle.importKey(
-          "raw",
-          enc.encode(window.location.origin + "_secure_session_key"),
-          { name: "PBKDF2" },
-          false,
-          ["deriveKey"]
-        );
-        return crypto.subtle.deriveKey(
-          {
-            name: "PBKDF2",
-            salt: this._salt,
-            iterations: 100000,
-            hash: "SHA-256"
-          },
-          baseKey,
-          { name: "AES-GCM", length: 256 },
-          false,
-          ["encrypt", "decrypt"]
-        );
-      },
+    if (window.matchMedia('(pointer: fine)').matches) {
+      window.addEventListener('mousemove', (e) => {
+        document.documentElement.style.setProperty('--mouse-x', `${e.clientX}px`);
+        document.documentElement.style.setProperty('--mouse-y', `${e.clientY}px`);
+      }, { passive: true });
+    }
 
-      async setItem(key, plainObj) {
-        try {
-          const keyMaterial = await this._getKey();
-          const iv = crypto.getRandomValues(new Uint8Array(12));
-          const enc = new TextEncoder();
-          const ciphertext = await crypto.subtle.encrypt(
-            { name: "AES-GCM", iv: iv },
-            keyMaterial,
-            enc.encode(JSON.stringify(plainObj))
-          );
-          const payload = {
-            iv: Array.from(iv),
-            data: Array.from(new Uint8Array(ciphertext))
-          };
-          localStorage.setItem(`_sec_${key}`, JSON.stringify(payload));
-        } catch (e) {
-          console.warn("Secure store write failed", e);
-        }
-      },
-
-      async getItem(key) {
-        try {
-          const raw = localStorage.getItem(`_sec_${key}`);
-          if (!raw) return null;
-          const payload = JSON.parse(raw);
-          const keyMaterial = await this._getKey();
-          const decrypted = await crypto.subtle.decrypt(
-            { name: "AES-GCM", iv: new Uint8Array(payload.iv) },
-            keyMaterial,
-            new Uint8Array(payload.data)
-          );
-          const dec = new TextDecoder();
-          return JSON.parse(dec.decode(decrypted));
-        } catch (e) {
-          return null;
-        }
-      }
-    };
-
-    let currentFilter = 'ALL';
+    let cachedAccounts = [];
+    let logSource = null;
+    let authWatcher = null;
+    let inspectWatcher = null;
+    let includeAllCalendarEvents = false;
     let onlyFilesSetting = false;
     let designEventsSetting = false;
-    let spamProtectionSetting = true;
     let spamThresholdSetting = 50;
-    let defaultTimingSetting = "09:00";
-    let wasInspectRunning = false;
-    let cachedAccounts = [];
 
     function escapeHtml(str) {
       if (!str) return '';
-      return String(str)
-        .replace(/&/g, '&amp;')
-        .replace(/</g, '&lt;')
-        .replace(/>/g, '&gt;')
-        .replace(/"/g, '&quot;')
-        .replace(/'/g, '&#039;');
+      return String(str).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&#039;');
     }
 
-    function showLoader(msg = "Processing...") {
+    function showToast(msg, type = 'info') {
+      const container = document.getElementById('toast-container');
+      const toast = document.createElement('div');
+      const colors = {
+        success: 'bg-emerald-950/90 border-emerald-500/40 text-emerald-300',
+        error: 'bg-rose-950/90 border-rose-500/40 text-rose-300',
+        info: 'bg-slate-900/90 border-blue-500/40 text-blue-300'
+      };
+      toast.className = `p-3 rounded-xl border backdrop-blur-md shadow-2xl text-xs flex items-center gap-2 ${colors[type] || colors.info} animate-fade-in pointer-events-auto transition-all duration-300`;
+      toast.innerHTML = `<span>${escapeHtml(msg)}</span>`;
+      container.appendChild(toast);
+      setTimeout(() => {
+        toast.classList.add('opacity-0', 'translate-x-4');
+        setTimeout(() => toast.remove(), 300);
+      }, 3000);
+    }
+
+    function showLoader(msg = "Processing...", allowCancel = false) {
       const loader = document.getElementById('global-loader');
       const text = document.getElementById('loader-message');
+      const cancelBtn = document.getElementById('loader-cancel-btn');
       if (text) text.innerText = msg;
-      if (loader) {
-        loader.classList.remove('opacity-0', 'pointer-events-none');
-        loader.classList.add('opacity-100');
+      if (cancelBtn) {
+        if (allowCancel) cancelBtn.classList.remove('hidden');
+        else cancelBtn.classList.add('hidden');
       }
+      if (loader) loader.classList.remove('opacity-0', 'pointer-events-none');
     }
 
     function hideLoader() {
       const loader = document.getElementById('global-loader');
-      if (loader) {
-        loader.classList.remove('opacity-100');
-        loader.classList.add('opacity-0', 'pointer-events-none');
+      if (loader) loader.classList.add('opacity-0', 'pointer-events-none');
+      if (authWatcher) { clearInterval(authWatcher); authWatcher = null; }
+    }
+
+    function updateGreeting(name) {
+      const hr = new Date().getHours();
+      let tod = "Evening";
+      if (hr < 12) tod = "Morning";
+      else if (hr < 17) tod = "Afternoon";
+      const displayName = name ? name.split(' ')[0] : "User";
+      document.getElementById('greeting-heading').innerText = `Good ${tod}, ${displayName}!`;
+    }
+
+    function switchTab(tabId) {
+      ['tab-dashboard', 'tab-accounts', 'tab-logs', 'tab-calendar', 'tab-drive', 'tab-settings'].forEach(id => {
+        const el = document.getElementById(id);
+        if (el) el.classList.add('hidden');
+        const btn = document.getElementById('btn-' + id);
+        if (btn) btn.className = "nav-btn w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-xs font-semibold text-slate-400 hover:text-white hover:bg-white/[0.04]";
+      });
+
+      const activePane = document.getElementById(tabId);
+      if (activePane) {
+        activePane.classList.remove('hidden', 'tab-content-pane');
+        void activePane.offsetWidth;
+        activePane.classList.add('tab-content-pane');
       }
-    }
 
-    function triggerAddAccount() {
-      showLoader('Opening Google account connection...');
-      window.location.href = `${BACKEND_URL}/auth/login`;
-    }
+      const activeBtn = document.getElementById('btn-' + tabId);
+      if (activeBtn) activeBtn.className = "nav-btn w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-xs font-semibold bg-slate-800/90 text-white shadow-inner";
 
-    // ----------------- Multi-Account Header & User Menu ----------------- //
+      if (tabId === 'tab-calendar') loadCalendarEvents();
+      if (tabId === 'tab-accounts') loadAccounts();
+      if (tabId === 'tab-settings') loadSettings();
+      if (tabId === 'tab-dashboard') {
+        loadStats();
+        loadDashboardActivity();
+        loadDashboardCalendar();
+      }
+      lucide.createIcons();
+    }
 
     function toggleUserMenu(e) {
       if (e) e.stopPropagation();
-      const menu = document.getElementById('user-dropdown-menu');
-      if (menu) menu.classList.toggle('hidden');
+      const m = document.getElementById('user-dropdown-menu');
+      if (m) m.classList.toggle('hidden');
     }
+    window.addEventListener('click', () => {
+      const m = document.getElementById('user-dropdown-menu');
+      if (m && !m.classList.contains('hidden')) m.classList.add('hidden');
+    });
 
     async function loadUser() {
       try {
         const res = await fetch(`${BACKEND_URL}/api/user`);
         const data = await res.json();
-        const container = document.getElementById('auth-container');
-
         if (data.authenticated) {
-          // Encrypt and persist session details client-side
-          await EncryptedSession.setItem("active_user", { email: data.email, total: data.total_accounts });
-
-          const avatar = data.picture
-            ? `<img src="${data.picture}" class="w-6 h-6 rounded-full border border-white/20 object-cover" referrerpolicy="no-referrer" />`
-            : `<div class="w-6 h-6 rounded-full bg-indigo-600 text-white flex items-center justify-center text-[11px] font-bold">${data.email[0].toUpperCase()}</div>`;
-
-          container.innerHTML = `
-            <div class="relative" id="user-menu-wrapper">
-              <button onclick="toggleUserMenu(event)" class="flex items-center gap-2 px-3 py-1.5 rounded-full bg-slate-900/80 border border-white/10 hover:border-indigo-500/40 transition active:scale-95 shadow-sm">
-                ${avatar}
-                <span class="text-xs text-slate-300 font-medium truncate max-w-[110px] sm:max-w-[140px]">${escapeHtml(data.email)}</span>
-                <span class="text-[10px] bg-indigo-500/20 text-indigo-300 px-1.5 py-0.5 rounded-md font-semibold">${data.total_accounts} inboxes</span>
-                <i data-lucide="chevron-down" class="w-3.5 h-3.5 text-slate-400"></i>
-              </button>
-
-              <div id="user-dropdown-menu" class="hidden absolute right-0 mt-2.5 w-56 bg-slate-900/95 border border-white/10 rounded-2xl shadow-2xl p-2 backdrop-blur-2xl z-50">
-                <div class="px-3 py-2 border-b border-white/5 mb-1">
-                  <p class="text-[11px] font-medium text-slate-400">Signed in as</p>
-                  <p class="text-xs font-semibold text-white truncate">${escapeHtml(data.email)}</p>
-                </div>
-                <button onclick="triggerAddAccount()" class="w-full flex items-center gap-2.5 px-3 py-2 text-xs text-slate-300 hover:text-white hover:bg-white/5 rounded-xl transition text-left">
-                  <i data-lucide="users" class="w-4 h-4 text-indigo-400"></i>
-                  <span>Add Another Account</span>
-                </button>
-                <button onclick="openSignOutModal()" class="w-full flex items-center gap-2.5 px-3 py-2 text-xs text-rose-400 hover:bg-rose-500/10 rounded-xl transition text-left">
-                  <i data-lucide="log-out" class="w-4 h-4"></i>
-                  <span>Sign Out...</span>
-                </button>
-              </div>
-            </div>
-          `;
-          lucide.createIcons();
+          document.getElementById('header-email').innerText = data.email;
+          document.getElementById('dropdown-user-email').innerText = data.email;
+          const letter = (data.name || data.email)[0].toUpperCase();
+          document.getElementById('header-avatar').innerText = letter;
+          updateGreeting(data.name);
         } else {
-          window.location.href = "login.html";
+          window.location.replace("/login.html");
         }
-      } catch (err) {
-        window.location.href = "login.html";
+      } catch (e) {
+        setTimeout(async () => {
+          try {
+            const res = await fetch(`${BACKEND_URL}/api/user`);
+            const data = await res.json();
+            if (!data.authenticated) window.location.replace("/login.html");
+          } catch(err) {
+            window.location.replace("/login.html");
+          }
+        }, 1200);
       }
     }
 
@@ -725,654 +634,509 @@
         const res = await fetch(`${BACKEND_URL}/api/accounts`);
         const data = await res.json();
         cachedAccounts = data.accounts || [];
-        await EncryptedSession.setItem("cached_accounts", cachedAccounts);
+
+        const activeCount = cachedAccounts.filter(a => a.is_monitored).length;
+        document.getElementById('kpi-accounts-active').innerText = activeCount;
+        document.getElementById('sidebar-accounts-count').innerText = `Monitoring ${cachedAccounts.length} account${cachedAccounts.length !== 1 ? 's' : ''}`;
 
         const container = document.getElementById('accounts-container');
-
-        if (cachedAccounts.length === 0) {
-          container.innerHTML = `
-            <div class="col-span-full p-6 text-center text-xs text-slate-400 rounded-2xl bg-slate-900/40 border border-white/5">
-              No Google accounts connected. Click "Add Another Google Account" to configure an inbox.
-            </div>
-          `;
+        if (!cachedAccounts.length) {
+          container.innerHTML = `<div class="col-span-2 p-4 text-xs text-slate-400">No connected accounts. Click "Add Account" to start.</div>`;
           return;
         }
 
-        container.innerHTML = cachedAccounts.map(acc => {
-          const isMonitored = acc.is_monitored === 1;
-          const avatar = acc.picture
-            ? `<img src="${acc.picture}" class="w-8 h-8 rounded-full border border-white/15 object-cover" referrerpolicy="no-referrer"/>`
-            : `<div class="w-8 h-8 rounded-full bg-indigo-600 text-white flex items-center justify-center text-xs font-bold">${acc.email[0].toUpperCase()}</div>`;
-
-          return `
-            <div class="p-4 rounded-2xl bg-slate-900/60 border ${isMonitored ? 'border-indigo-500/30 shadow-md shadow-indigo-500/5' : 'border-white/5 opacity-70'} flex flex-col justify-between gap-3 transition">
-              <div class="flex items-start justify-between gap-2">
-                <div class="flex items-center gap-2.5 overflow-hidden">
-                  ${avatar}
-                  <div class="overflow-hidden">
-                    <p class="text-xs font-semibold text-white truncate">${escapeHtml(acc.name || acc.email)}</p>
-                    <p class="text-[11px] text-slate-400 truncate">${escapeHtml(acc.email)}</p>
-                  </div>
-                </div>
-                <button onclick="openSignOutModal()" class="text-slate-400 hover:text-rose-400 p-1 rounded-lg transition" title="Sign out this account">
-                  <i data-lucide="log-out" class="w-3.5 h-3.5"></i>
-                </button>
+        container.innerHTML = cachedAccounts.map(acc => `
+          <div class="p-3.5 rounded-xl bg-slate-900/60 border border-white/5 flex items-center justify-between">
+            <div class="flex items-center gap-2.5 overflow-hidden">
+              <div class="w-7 h-7 rounded-full bg-blue-600 text-white flex items-center justify-center text-xs font-bold shrink-0">
+                ${acc.email[0].toUpperCase()}
               </div>
-
-              <div class="flex items-center justify-between pt-2 border-t border-white/5">
-                <span class="text-[11px] font-semibold ${isMonitored ? 'text-emerald-400' : 'text-slate-400'}">
-                  ${isMonitored ? 'Included in Monitoring' : 'Excluded (Ignored)'}
-                </span>
-                <button onclick="toggleAccount('${acc.email}', ${!isMonitored})" class="relative inline-flex h-5 w-9 shrink-0 cursor-pointer rounded-full border-2 border-transparent ${isMonitored ? 'bg-indigo-600' : 'bg-slate-700'} transition-colors duration-200 ease-in-out focus:outline-none">
-                  <span class="${isMonitored ? 'translate-x-4' : 'translate-x-0'} pointer-events-none inline-block h-4 w-4 transform rounded-full bg-white shadow ring-0 transition duration-200 ease-in-out"></span>
-                </button>
+              <div class="overflow-hidden">
+                <p class="text-xs font-semibold text-white truncate">${escapeHtml(acc.name || acc.email)}</p>
+                <p class="text-[10px] text-slate-400 truncate">${escapeHtml(acc.email)}</p>
               </div>
             </div>
-          `;
-        }).join('');
-        lucide.createIcons();
-      } catch (err) {
-        console.error("Failed to load accounts", err);
-      }
+            <button onclick="toggleAccount('${acc.email}', ${!acc.is_monitored})" class="relative inline-flex h-5 w-9 shrink-0 cursor-pointer rounded-full border-2 border-transparent ${acc.is_monitored ? 'bg-blue-600' : 'bg-slate-700'} transition-colors">
+              <span class="${acc.is_monitored ? 'translate-x-4' : 'translate-x-0'} pointer-events-none inline-block h-4 w-4 transform rounded-full bg-white shadow transition"></span>
+            </button>
+          </div>
+        `).join('');
+      } catch (err) {}
     }
 
-    async function toggleAccount(email, newStatus) {
-      showLoader(`Updating monitoring for ${email}...`);
+    async function toggleAccount(email, status) {
+      showLoader("Updating account...");
       try {
         await fetch(`${BACKEND_URL}/api/accounts/toggle`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ email: email, is_monitored: newStatus })
+          body: JSON.stringify({ email: email, is_monitored: status })
         });
         await loadAccounts();
-        await loadUser();
         await loadStats();
+        showToast(`Account monitoring ${status ? 'enabled' : 'paused'}`, 'success');
       } finally {
         hideLoader();
       }
     }
 
-    // ----------------- SIGN OUT MODAL LOGIC (NO RELOAD UNTIL ALL GONE) ----------------- //
+    async function triggerAddAccount() {
+      showLoader('Opening Google Sign-In in Chrome...', true);
+      const sessionId = localStorage.getItem("assistant_session_id") || crypto.randomUUID();
+      localStorage.setItem("assistant_session_id", sessionId);
+
+      try {
+        await fetch(`${BACKEND_URL}/api/auth/launch-browser`, {
+          method: "POST",
+          headers: { 'Content-Type': 'application/json', 'X-Session-ID': sessionId }
+        });
+      } catch (e) {
+        window.location.href = `/auth/login?session_id=${sessionId}&browser=1`;
+        return;
+      }
+
+      if (authWatcher) clearInterval(authWatcher);
+
+      authWatcher = setInterval(async () => {
+        try {
+          const res = await fetch(`${BACKEND_URL}/api/auth/status?session_id=${sessionId}`);
+          const d = await res.json();
+          if (d.status === "completed" || d.authenticated) {
+            clearInterval(authWatcher);
+            authWatcher = null;
+            hideLoader();
+            showToast("Account connected successfully!", "success");
+            await loadAccounts();
+            await loadUser();
+            await loadStats();
+            await loadDashboardActivity();
+            await loadDashboardCalendar();
+          } else if (d.status === "failed") {
+            clearInterval(authWatcher);
+            authWatcher = null;
+            hideLoader();
+            showToast(d.error || "Authentication cancelled", "error");
+          }
+        } catch (err) {}
+      }, 1500);
+
+      setTimeout(() => {
+        if (authWatcher) {
+          clearInterval(authWatcher);
+          authWatcher = null;
+          hideLoader();
+        }
+      }, 60000);
+    }
 
     function openSignOutModal() {
-      const userMenu = document.getElementById('user-dropdown-menu');
-      if (userMenu) userMenu.classList.add('hidden');
-
-      renderSignOutAccountsList();
+      const container = document.getElementById('signout-accounts-list');
+      if (!cachedAccounts.length) {
+        container.innerHTML = `<div class="p-4 text-center text-xs text-slate-400">No accounts connected.</div>`;
+      } else {
+        container.innerHTML = cachedAccounts.map(acc => `
+          <div class="p-3 rounded-xl bg-slate-900 border border-white/5 flex items-center justify-between">
+            <p class="text-xs text-white truncate max-w-[220px]">${escapeHtml(acc.email)}</p>
+            <button onclick="signOutSpecificAccount('${acc.email}')" class="btn-action px-2.5 py-1 rounded-lg bg-rose-500/10 text-rose-400 text-xs font-semibold hover:bg-rose-500/20 border border-rose-500/20">Sign Out</button>
+          </div>
+        `).join('');
+      }
       const modal = document.getElementById('signout-modal');
-      const modalCard = document.getElementById('signout-modal-card');
       modal.classList.remove('opacity-0', 'pointer-events-none');
-      modal.classList.add('opacity-100');
-      modalCard.classList.remove('scale-95');
-      modalCard.classList.add('scale-100');
       lucide.createIcons();
     }
 
     function closeSignOutModal() {
-      const modal = document.getElementById('signout-modal');
-      const modalCard = document.getElementById('signout-modal-card');
-      modal.classList.remove('opacity-100');
-      modal.classList.add('opacity-0', 'pointer-events-none');
-      modalCard.classList.remove('scale-100');
-      modalCard.classList.add('scale-95');
+      document.getElementById('signout-modal').classList.add('opacity-0', 'pointer-events-none');
     }
 
     function handleModalBackdropClick(e) {
-      if (e.target.id === 'signout-modal') {
-        closeSignOutModal();
-      }
-    }
-
-    window.addEventListener('keydown', (e) => {
-      if (e.key === 'Escape') {
-        closeSignOutModal();
-      }
-    });
-
-    function renderSignOutAccountsList() {
-      const container = document.getElementById('signout-accounts-list');
-      if (!cachedAccounts || cachedAccounts.length === 0) {
-        container.innerHTML = `<div class="p-4 text-center text-xs text-slate-400">No active accounts found.</div>`;
-        return;
-      }
-
-      container.innerHTML = cachedAccounts.map(acc => {
-        const avatar = acc.picture
-          ? `<img src="${acc.picture}" class="w-8 h-8 rounded-full border border-white/15 object-cover" referrerpolicy="no-referrer"/>`
-          : `<div class="w-8 h-8 rounded-full bg-indigo-600 text-white flex items-center justify-center text-xs font-bold">${acc.email[0].toUpperCase()}</div>`;
-
-        return `
-          <div id="signout-row-${encodeURIComponent(acc.email).replace(/%/g, '_')}" class="p-3 rounded-2xl bg-slate-900/80 border border-white/5 flex items-center justify-between gap-3 transition">
-            <div class="flex items-center gap-2.5 overflow-hidden">
-              ${avatar}
-              <div class="overflow-hidden">
-                <p class="text-xs font-semibold text-white truncate">${escapeHtml(acc.name || acc.email)}</p>
-                <p class="text-[11px] text-slate-400 truncate">${escapeHtml(acc.email)}</p>
-              </div>
-            </div>
-            <button onclick="signOutSpecificAccount('${acc.email}')" class="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-rose-500/10 hover:bg-rose-500/20 border border-rose-500/30 text-rose-300 hover:text-rose-200 text-xs font-semibold transition active:scale-95 shrink-0">
-              <i data-lucide="log-out" class="w-3.5 h-3.5"></i>
-              <span>Sign Out</span>
-            </button>
-          </div>
-        `;
-      }).join('');
-      lucide.createIcons();
+      if (e.target.id === 'signout-modal') closeSignOutModal();
     }
 
     async function signOutSpecificAccount(email) {
-      const rowId = `signout-row-${encodeURIComponent(email).replace(/%/g, '_')}`;
-      const rowEl = document.getElementById(rowId);
-      if (rowEl) {
-        rowEl.classList.add('opacity-40', 'pointer-events-none');
-      }
-
+      showLoader("Disconnecting inbox...");
       try {
         const res = await fetch(`${BACKEND_URL}/api/accounts/delete`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ email: email })
         });
-        const result = await res.json();
-
-        cachedAccounts = cachedAccounts.filter(a => a.email !== email);
-        await EncryptedSession.setItem("cached_accounts", cachedAccounts);
-
-        if (rowEl) rowEl.remove();
-
-        // Check if all accounts have been disconnected
-        if (cachedAccounts.length === 0 || (result.remaining !== undefined && result.remaining === 0)) {
-          showLoader("All accounts signed out. Redirecting to login...");
-          setTimeout(() => {
-            window.location.href = "login.html";
-          }, 600);
-          return;
-        }
-
-        renderSignOutAccountsList();
-        await loadAccounts();
-        await loadUser();
-        await loadStats();
-      } catch (err) {
-        console.error("Failed to sign out account:", err);
-        if (rowEl) rowEl.classList.remove('opacity-40', 'pointer-events-none');
-      }
-    }
-
-    // ----------------- Settings Menu Logic ----------------- //
-
-    function toggleSettingsMenu(e) {
-      if (e) e.stopPropagation();
-      const menu = document.getElementById('settings-menu');
-      if (menu) menu.classList.toggle('hidden');
-    }
-
-    window.addEventListener('click', (e) => {
-      const settingsWrapper = document.getElementById('settings-wrapper');
-      const settingsMenu = document.getElementById('settings-menu');
-      if (settingsWrapper && !settingsWrapper.contains(e.target) && settingsMenu && !settingsMenu.classList.contains('hidden')) {
-        settingsMenu.classList.add('hidden');
-      }
-
-      const userWrapper = document.getElementById('user-menu-wrapper');
-      const userMenu = document.getElementById('user-dropdown-menu');
-      if (userWrapper && !userWrapper.contains(e.target) && userMenu && !userMenu.classList.contains('hidden')) {
-        userMenu.classList.add('hidden');
-      }
-    });
-
-    function onSpamThresholdSlider(val) {
-      document.getElementById('spam-threshold-badge').innerText = `${val}%`;
-      document.getElementById('spam-desc-pct').innerText = `${val}%`;
-    }
-
-    async function saveSpamThreshold(val) {
-      showLoader(`Setting spam threshold to ${val}%...`);
-      spamThresholdSetting = parseInt(val, 10);
-      try {
-        await fetch(`${BACKEND_URL}/api/settings`, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ spam_threshold: spamThresholdSetting })
-        });
-      } catch (err) {
-        console.error("Failed to save spam threshold", err);
-      } finally {
-        hideLoader();
-      }
-    }
-
-    async function loadSettings() {
-      try {
-        const res = await fetch(`${BACKEND_URL}/api/settings`);
         const data = await res.json();
-        onlyFilesSetting = !!data.only_remind_with_files;
-        designEventsSetting = !!data.design_events_enabled;
-        spamProtectionSetting = data.spam_protection_enabled !== undefined ? !!data.spam_protection_enabled : true;
-        spamThresholdSetting = data.spam_threshold !== undefined ? data.spam_threshold : 50;
-        defaultTimingSetting = data.default_timing || "09:00";
-
-        const input = document.getElementById('design-prompt-input');
-        if (input && data.design_events_prompt) {
-          input.value = data.design_events_prompt;
-        }
-
-        const timingInput = document.getElementById('default-timing-input');
-        if (timingInput) {
-          timingInput.value = defaultTimingSetting;
-        }
-
-        const slider = document.getElementById('spam-threshold-slider');
-        if (slider) slider.value = spamThresholdSetting;
-        onSpamThresholdSlider(spamThresholdSetting);
-
-        renderSettingsUI();
-      } catch (err) {}
-    }
-
-    function renderSettingsUI() {
-      const fileBtn = document.getElementById('btn-file-toggle');
-      const fileCircle = document.getElementById('btn-file-toggle-circle');
-      const fileBadge = document.getElementById('file-setting-status-badge');
-
-      if (fileBtn && fileCircle && fileBadge) {
-        if (onlyFilesSetting) {
-          fileBtn.className = "relative inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full border-2 border-transparent bg-indigo-600 transition-colors duration-200 ease-in-out focus:outline-none shadow-md shadow-indigo-600/30";
-          fileCircle.className = "translate-x-5 pointer-events-none inline-block h-5 w-5 transform rounded-full bg-white shadow ring-0 transition duration-200 ease-in-out";
-          fileBadge.innerText = "Enabled (Files Required)";
-          fileBadge.className = "text-[11px] font-semibold text-emerald-400";
+        closeSignOutModal();
+        if (data.remaining === 0) {
+          await handleFullSignOut();
         } else {
-          fileBtn.className = "relative inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full border-2 border-transparent bg-slate-700 transition-colors duration-200 ease-in-out focus:outline-none";
-          fileCircle.className = "translate-x-0 pointer-events-none inline-block h-5 w-5 transform rounded-full bg-white shadow ring-0 transition duration-200 ease-in-out";
-          fileBadge.innerText = "Disabled (All Reminders)";
-          fileBadge.className = "text-[11px] font-semibold text-slate-400";
+          await loadAccounts();
+          await loadUser();
+          showToast(`Signed out ${email}`, 'info');
         }
-      }
-
-      const designBtn = document.getElementById('btn-design-toggle');
-      const designCircle = document.getElementById('btn-design-toggle-circle');
-      const designBadge = document.getElementById('design-setting-status-badge');
-      const promptContainer = document.getElementById('design-prompt-container');
-
-      if (designBtn && designCircle && designBadge && promptContainer) {
-        if (designEventsSetting) {
-          designBtn.className = "relative inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full border-2 border-transparent bg-purple-600 transition-colors duration-200 ease-in-out focus:outline-none shadow-md shadow-purple-600/30";
-          designCircle.className = "translate-x-5 pointer-events-none inline-block h-5 w-5 transform rounded-full bg-white shadow ring-0 transition duration-200 ease-in-out";
-          designBadge.innerText = "Turned On (Active Prompt)";
-          designBadge.className = "text-[11px] font-semibold text-purple-400";
-          promptContainer.classList.remove('hidden');
-        } else {
-          designBtn.className = "relative inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full border-2 border-transparent bg-slate-700 transition-colors duration-200 ease-in-out focus:outline-none";
-          designCircle.className = "translate-x-0 pointer-events-none inline-block h-5 w-5 transform rounded-full bg-white shadow ring-0 transition duration-200 ease-in-out";
-          designBadge.innerText = "Turned Off";
-          designBadge.className = "text-[11px] font-semibold text-slate-400";
-          promptContainer.classList.add('hidden');
-        }
-      }
-
-      const spamBtn = document.getElementById('btn-spam-toggle');
-      const spamCircle = document.getElementById('btn-spam-toggle-circle');
-
-      if (spamBtn && spamCircle) {
-        if (spamProtectionSetting) {
-          spamBtn.className = "relative inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full border-2 border-transparent bg-indigo-600 transition-colors duration-200 ease-in-out focus:outline-none shadow-md shadow-indigo-600/30";
-          spamCircle.className = "translate-x-5 pointer-events-none inline-block h-5 w-5 transform rounded-full bg-white shadow ring-0 transition duration-200 ease-in-out";
-        } else {
-          spamBtn.className = "relative inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full border-2 border-transparent bg-slate-700 transition-colors duration-200 ease-in-out focus:outline-none";
-          spamCircle.className = "translate-x-0 pointer-events-none inline-block h-5 w-5 transform rounded-full bg-white shadow ring-0 transition duration-200 ease-in-out";
-        }
-      }
-
-      lucide.createIcons();
-    }
-
-    async function toggleOnlyFilesSetting() {
-      showLoader("Updating file setting...");
-      onlyFilesSetting = !onlyFilesSetting;
-      renderSettingsUI();
-      try {
-        await fetch(`${BACKEND_URL}/api/settings`, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ only_remind_with_files: onlyFilesSetting })
-        });
       } finally {
         hideLoader();
       }
     }
 
-    async function toggleDesignEventsSetting() {
-      showLoader("Updating custom prompt setting...");
-      designEventsSetting = !designEventsSetting;
-      renderSettingsUI();
+    async function handleFullSignOut() {
+      showLoader("Signing out...");
       try {
-        await fetch(`${BACKEND_URL}/api/settings`, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ design_events_enabled: designEventsSetting })
-        });
-      } finally {
-        hideLoader();
-      }
-    }
+        localStorage.clear();
+        sessionStorage.clear();
+        document.cookie = "assistant_session_id=; path=/; expires=Thu, 01 Jan 1970 00:00:00 UTC;";
 
-    async function toggleSpamProtectionSetting() {
-      showLoader("Updating spam setting...");
-      spamProtectionSetting = !spamProtectionSetting;
-      renderSettingsUI();
-      try {
-        await fetch(`${BACKEND_URL}/api/settings`, {
+        await fetch(`${BACKEND_URL}/auth/logout`, {
           method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ spam_protection_enabled: spamProtectionSetting })
+          headers: { 'Content-Type': 'application/json' }
         });
-      } finally {
-        hideLoader();
-      }
-    }
-
-    async function saveDesignPrompt() {
-      showLoader("Saving AI instructions...");
-      const promptVal = document.getElementById('design-prompt-input').value;
-      try {
-        await fetch(`${BACKEND_URL}/api/settings`, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            design_events_prompt: promptVal,
-            design_events_enabled: true
-          })
-        });
-        designEventsSetting = true;
-        renderSettingsUI();
-
-        const fb = document.getElementById('design-save-feedback');
-        fb.classList.remove('opacity-0');
-        setTimeout(() => fb.classList.add('opacity-0'), 2500);
-      } finally {
-        hideLoader();
-      }
-    }
-
-    async function saveDefaultTiming() {
-      const timeVal = document.getElementById('default-timing-input').value;
-      if (!timeVal) return;
-      showLoader("Updating default event timing...");
-      try {
-        await fetch(`${BACKEND_URL}/api/settings`, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ default_timing: timeVal })
-        });
-        defaultTimingSetting = timeVal;
-        const badge = document.getElementById('timing-saved-badge');
-        if (badge) {
-          badge.classList.remove('opacity-0');
-          setTimeout(() => badge.classList.add('opacity-0'), 2000);
-        }
       } catch (err) {
-        console.error("Failed to save default timing", err);
       } finally {
-        hideLoader();
+        window.location.replace("/login.html");
       }
-    }
-
-    // ----------------- Core Dashboard Logic ----------------- //
-
-    function switchTab(tabId) {
-      ['tab-feed', 'tab-calendar', 'tab-logs', 'tab-inspect'].forEach(id => {
-        const el = document.getElementById(id);
-        if (el) el.classList.add('hidden');
-        const btn = document.getElementById('btn-' + id);
-        if (btn) btn.className = "flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-semibold text-slate-400 hover:text-white transition-all";
-      });
-
-      const activeSection = document.getElementById(tabId);
-      if (activeSection) activeSection.classList.remove('hidden');
-
-      const activeBtn = document.getElementById('btn-' + tabId);
-      if (activeBtn) activeBtn.className = "flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-semibold transition-all bg-indigo-600 text-white shadow-md";
-
-      if (tabId === 'tab-calendar') loadCalendarEvents();
-      if (tabId === 'tab-inspect') pollInspectStatus();
-      lucide.createIcons();
     }
 
     async function loadStats() {
       try {
         const res = await fetch(`${BACKEND_URL}/api/stats`);
         const data = await res.json();
-        document.getElementById('kpi-total').innerText = data.summary.total;
-        document.getElementById('kpi-actioned').innerText = data.summary.actioned;
-        document.getElementById('kpi-processed').innerText = data.summary.processed;
-        document.getElementById('kpi-time').innerText = data.summary.time_saved;
-
-        const workerRunning = data.worker.is_running;
-        const pulse = document.getElementById('worker-pulse');
-        const statusText = document.getElementById('worker-status-text');
-        const toggleBtn = document.getElementById('btn-worker-label');
-
-        if (workerRunning) {
-          pulse.innerHTML = `
-            <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
-            <span class="relative inline-flex rounded-full h-2.5 w-2.5 bg-emerald-500"></span>
-          `;
-          statusText.innerText = "Live";
-          statusText.className = "text-emerald-300 font-semibold tracking-wide uppercase text-[11px]";
-          toggleBtn.innerText = "Turn Off";
-        } else {
-          pulse.innerHTML = `<span class="relative inline-flex rounded-full h-2.5 w-2.5 bg-slate-500"></span>`;
-          statusText.innerText = "Idle";
-          statusText.className = "text-slate-400 font-semibold tracking-wide uppercase text-[11px]";
-          toggleBtn.innerText = "Turn On";
+        if (data.summary) {
+          document.getElementById('kpi-total').innerText = data.summary.total;
+          document.getElementById('kpi-actioned').innerText = data.summary.actioned;
+          document.getElementById('kpi-attachments').innerText = data.summary.filtered || 0;
         }
+        const running = data.worker && data.worker.is_running;
+        const text = running ? "Running" : "Idle";
+        document.getElementById('header-worker-text').innerText = text;
+        document.getElementById('sidebar-worker-status').innerText = text;
+
+        const dotClass = running ? "bg-emerald-400 shadow-[0_0_8px_#34d399] animate-pulse" : "bg-slate-500 shadow-none";
+        document.getElementById('header-worker-dot').className = `w-2 h-2 rounded-full ${dotClass}`;
+        document.getElementById('sidebar-worker-dot').className = `w-2 h-2 rounded-full ${dotClass}`;
       } catch (err) {}
-    }
-
-    async function loadFeed() {
-      const tbody = document.getElementById('feed-tbody');
-      try {
-        const res = await fetch(`${BACKEND_URL}/api/emails?category_filter=${encodeURIComponent(currentFilter)}`);
-        const data = await res.json();
-        if (!data.emails || data.emails.length === 0) {
-          tbody.innerHTML = `<tr><td colspan="6" class="py-10 text-center text-slate-400">No emails in this category yet.</td></tr>`;
-          return;
-        }
-
-        tbody.innerHTML = data.emails.map(e => {
-          let badge = `<span class="px-2.5 py-1 rounded-lg text-[10px] font-semibold whitespace-nowrap inline-flex items-center bg-slate-800 text-slate-300">General</span>`;
-          if (e.category === 'Meeting & Event') {
-            badge = `<span class="px-2.5 py-1 rounded-lg text-[10px] font-semibold whitespace-nowrap inline-flex items-center bg-emerald-500/20 text-emerald-400 border border-emerald-500/30">Meeting / Event</span>`;
-          } else if (e.category === 'Task & Deadline') {
-            badge = `<span class="px-2.5 py-1 rounded-lg text-[10px] font-semibold whitespace-nowrap inline-flex items-center bg-blue-500/20 text-blue-300 border border-blue-500/30">Task / Deadline</span>`;
-          } else if (e.category === 'Important Update') {
-            badge = `<span class="px-2.5 py-1 rounded-lg text-[10px] font-semibold whitespace-nowrap inline-flex items-center bg-purple-500/20 text-purple-300 border border-purple-500/30">Important Update</span>`;
-          } else if (e.category === 'Spam / Scam') {
-            badge = `<span class="px-2.5 py-1 rounded-lg text-[10px] font-semibold whitespace-nowrap inline-flex items-center bg-rose-500/20 text-rose-400 border border-rose-500/30">Spam / Scam</span>`;
-          }
-
-          const actionClass = (e.category === 'Spam / Scam' || (e.action_taken && e.action_taken.includes('Ignored')))
-            ? 'text-rose-400'
-            : (e.status === 'ACTIONED' ? 'text-emerald-400' : 'text-slate-300');
-
-          const when = e.processed_at ? new Date(e.processed_at).toLocaleString([], {month: 'short', day: 'numeric', hour: '2-digit', minute:'2-digit'}) : 'Recently';
-
-          return `
-            <tr class="hover:bg-white/[0.02] transition-colors">
-              <td class="py-3.5 px-4 font-mono text-slate-400 text-[11px] truncate max-w-[140px]">${escapeHtml(e.account_email || 'default')}</td>
-              <td class="py-3.5 px-4 whitespace-nowrap">${badge}</td>
-              <td class="py-3.5 px-4 max-w-[200px]">
-                <p class="font-medium text-slate-200 truncate">${escapeHtml(e.subject || 'No Subject')}</p>
-                <p class="text-[11px] text-slate-400 truncate">${escapeHtml(e.sender || 'Unknown')}</p>
-              </td>
-              <td class="py-3.5 px-4 text-slate-300 max-w-[280px] leading-relaxed">${escapeHtml(e.summary || '-')}</td>
-              <td class="py-3.5 px-4 ${actionClass} text-xs font-medium whitespace-nowrap">${escapeHtml(e.action_taken || 'Organized')}</td>
-              <td class="py-3.5 px-4 text-slate-400 text-[11px] font-mono whitespace-nowrap">${when}</td>
-            </tr>
-          `;
-        }).join('');
-      } catch (err) {
-        tbody.innerHTML = `<tr><td colspan="6" class="py-10 text-center text-rose-400">Could not read email database.</td></tr>`;
-      }
-    }
-
-    function filterFeed(category, btnElement) {
-      currentFilter = category;
-      document.querySelectorAll('.feed-btn').forEach(b => {
-        b.className = "feed-btn px-3 py-1.5 rounded-lg font-medium text-slate-400 hover:text-white";
-      });
-      if (btnElement) {
-        btnElement.className = "feed-btn px-3 py-1.5 rounded-lg font-medium bg-indigo-600 text-white";
-      }
-      loadFeed();
     }
 
     async function toggleWorker() {
-      const toggleBtn = document.getElementById('btn-worker-label');
-      const isRunning = toggleBtn.innerText.includes("Turn Off");
-      showLoader(isRunning ? "Stopping background monitor..." : "Starting inboxes monitor...");
+      const statusText = document.getElementById('header-worker-text').innerText;
+      const isRunning = statusText.includes("RUNNING");
+      showLoader(isRunning ? "Pausing Assistant..." : "Activating Assistant...");
       try {
-        const endpoint = isRunning ? '/api/worker/stop' : '/api/worker/start';
-        await fetch(`${BACKEND_URL}${endpoint}`, { method: 'POST' });
+        await fetch(`${BACKEND_URL}${isRunning ? '/api/worker/stop' : '/api/worker/start'}`, { method: 'POST' });
         await loadStats();
+        showToast(isRunning ? "Monitoring paused" : "Monitoring active", "info");
       } finally {
         hideLoader();
       }
     }
 
-    // ----------------- Inspect Engine Controls ----------------- //
-
-    async function pollInspectStatus() {
+    async function loadDashboardActivity() {
+      const container = document.getElementById('recent-activity-list');
       try {
-        const res = await fetch(`${BACKEND_URL}/api/inspect/status`);
+        const res = await fetch(`${BACKEND_URL}/api/emails?category_filter=ALL&limit=6`);
         const data = await res.json();
+        const emails = data.emails || [];
 
-        const btn = document.getElementById('btn-inspect-toggle');
-        const label = document.getElementById('inspect-btn-label');
-        const statusText = document.getElementById('inspect-status-text');
-        const progressBar = document.getElementById('inspect-progress-bar');
-        const countLabel = document.getElementById('inspect-count-label');
-        const targetLabel = document.getElementById('inspect-target-label');
-        const selectBox = document.getElementById('inspect-count-select');
-
-        statusText.innerText = data.status_message;
-        countLabel.innerText = `${data.current_count} inspected`;
-        targetLabel.innerText = `Target: ${data.target_count} emails max`;
-
-        const pct = data.target_count > 0 ? Math.round((data.current_count / data.target_count) * 100) : 0;
-        progressBar.style.width = `${pct}%`;
-
-        if (data.is_running) {
-          btn.className = "w-full py-3 px-6 rounded-2xl bg-rose-600 hover:bg-rose-500 text-white font-semibold text-xs transition flex items-center justify-center gap-2 shadow-lg shadow-rose-600/20 active:scale-95";
-          label.innerText = "Turn Off (Stop Inspection)";
-          selectBox.disabled = true;
-          statusText.className = "text-indigo-400 font-semibold animate-pulse";
-          wasInspectRunning = true;
-        } else {
-          btn.className = "w-full py-3 px-6 rounded-2xl bg-indigo-600 hover:bg-indigo-500 text-white font-semibold text-xs transition flex items-center justify-center gap-2 shadow-lg shadow-indigo-600/20 active:scale-95";
-          label.innerText = "Turn On (Start Inspection)";
-          selectBox.disabled = false;
-          statusText.className = "text-slate-300 font-semibold";
-
-          if (wasInspectRunning) {
-            wasInspectRunning = false;
-            loadFeed();
-            loadStats();
-          }
-        }
-      } catch (err) {}
-    }
-
-    async function toggleInspect() {
-      const btnLabel = document.getElementById('inspect-btn-label').innerText;
-      const isRunning = btnLabel.includes("Turn Off");
-      showLoader(isRunning ? "Halting inspection..." : "Initiating inboxes analysis...");
-
-      try {
-        if (isRunning) {
-          await fetch(`${BACKEND_URL}/api/inspect/stop`, { method: 'POST' });
-        } else {
-          const selectedCount = parseInt(document.getElementById('inspect-count-select').value, 10);
-          const clampedCount = Math.min(selectedCount, 40);
-
-          await fetch(`${BACKEND_URL}/api/inspect/start`, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ count: clampedCount })
-          });
-        }
-        setTimeout(pollInspectStatus, 400);
-      } finally {
-        hideLoader();
-      }
-    }
-
-    async function loadCalendarEvents() {
-      showLoader("Syncing Google Calendars...");
-      const container = document.getElementById('calendar-cards');
-      try {
-        const res = await fetch(`${BACKEND_URL}/api/calendar/upcoming`);
-        const data = await res.json();
-        if (!data.events || data.events.length === 0) {
-          container.innerHTML = '<div class="text-slate-400 text-xs col-span-2 py-8 text-center">No upcoming events found on your Google Calendars.</div>';
+        if (!emails.length) {
+          container.innerHTML = `<div class="text-xs text-slate-500 py-8 text-center">No recent email activities recorded yet.</div>`;
           return;
         }
-        container.innerHTML = data.events.map(ev => {
-          const rawStart = ev.start.dateTime || ev.start.date;
-          const formattedDate = new Date(rawStart).toLocaleString([], {
-            weekday: 'short', month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit'
-          });
+
+        container.innerHTML = emails.map(e => {
+          let badgeColor = "bg-blue-500/15 text-blue-400";
+          let iconName = "mail";
+
+          if (e.category === 'Meeting & Event') { badgeColor = "bg-emerald-500/15 text-emerald-400"; iconName = "check"; }
+          else if (e.category === 'Spam / Scam') { badgeColor = "bg-rose-500/15 text-rose-400"; iconName = "shield-alert"; }
+          else if (e.action_taken && e.action_taken.includes("Attachment")) { badgeColor = "bg-blue-500/15 text-blue-400"; iconName = "file-text"; }
+
+          const timeStr = e.processed_at ? new Date(e.processed_at).toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'}) : 'Recently';
 
           return `
-            <div class="glass-card p-5 rounded-2xl space-y-2.5">
-              <div class="flex justify-between items-start">
-                <div>
-                  <h4 class="font-semibold text-sm text-slate-100">${escapeHtml(ev.summary || 'Scheduled Meeting')}</h4>
-                  <span class="text-[10px] text-indigo-400 font-mono">${escapeHtml(ev._account_email || '')}</span>
+            <div class="flex items-center justify-between p-2.5 rounded-xl bg-white/[0.015] border border-white/[0.03] hover:bg-white/[0.03] transition">
+              <div class="flex items-center gap-2.5 overflow-hidden">
+                <div class="w-7 h-7 rounded-lg ${badgeColor} flex items-center justify-center shrink-0">
+                  <i data-lucide="${iconName}" class="w-4 h-4"></i>
                 </div>
-                <a href="${ev.htmlLink}" target="_blank" class="p-1.5 rounded-lg bg-indigo-500/10 text-indigo-300 hover:text-indigo-200 border border-indigo-500/20 transition" title="Open in Google Calendar">
-                  <i data-lucide="external-link" class="w-3.5 h-3.5"></i>
-                </a>
+                <div class="overflow-hidden">
+                  <h4 class="text-xs font-semibold text-white truncate">${escapeHtml(e.subject || 'Scheduled Event')}</h4>
+                  <p class="text-[10px] text-slate-400 truncate">from ${escapeHtml(e.sender || 'Inbox')}</p>
+                </div>
               </div>
-              <p class="text-xs text-slate-300 flex items-center gap-2">
-                <i data-lucide="clock" class="w-3.5 h-3.5 text-indigo-400"></i>
-                <span>${formattedDate}</span>
-              </p>
+              <span class="text-[10px] text-slate-500 shrink-0 font-mono">${timeStr}</span>
             </div>
           `;
         }).join('');
         lucide.createIcons();
-      } catch (err) {
-        container.innerHTML = `<div class="text-rose-400 text-xs col-span-2 py-8 text-center">Could not reach Google Calendar.</div>`;
-      } finally {
-        hideLoader();
-      }
+      } catch (err) {}
+    }
+
+    async function loadDashboardCalendar() {
+      const container = document.getElementById('upcoming-events-list');
+      try {
+        const res = await fetch(`${BACKEND_URL}/api/calendar/upcoming?include_all=true`);
+        const data = await res.json();
+        const events = data.events || [];
+
+        if (!events.length) {
+          container.innerHTML = `<div class="text-xs text-slate-500 py-8 text-center">No upcoming calendar events detected.</div>`;
+          return;
+        }
+
+        container.innerHTML = events.slice(0, 4).map(ev => {
+          const rawStart = ev.start.dateTime || ev.start.date;
+          const formattedDate = new Date(rawStart).toLocaleString([], { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' });
+          const isMeet = (ev.htmlLink && ev.htmlLink.includes("meet")) || (ev.location && ev.location.includes("http"));
+
+          return `
+            <div class="p-3 rounded-xl bg-white/[0.015] border border-white/[0.03] flex items-center gap-3">
+              <div class="w-8 h-8 rounded-lg ${isMeet ? 'bg-blue-500/15 text-blue-400' : 'bg-purple-500/15 text-purple-400'} flex items-center justify-center shrink-0">
+                <i data-lucide="${isMeet ? 'video' : 'calendar'}" class="w-4 h-4"></i>
+              </div>
+              <div class="flex-1 overflow-hidden">
+                <h4 class="text-xs font-semibold text-white truncate">${escapeHtml(ev.summary || 'Scheduled Meeting')}</h4>
+                <div class="text-[11px] text-slate-400">${formattedDate}</div>
+                <div class="text-[10px] text-blue-400 flex items-center gap-1 mt-0.5 truncate">
+                  <i data-lucide="video" class="w-3 h-3"></i> ${isMeet ? 'Video Conference' : 'Google Calendar'}
+                </div>
+              </div>
+            </div>
+          `;
+        }).join('');
+        lucide.createIcons();
+      } catch (err) {}
+    }
+
+    async function loadCalendarEvents() {
+      const container = document.getElementById('calendar-cards');
+      try {
+        const res = await fetch(`${BACKEND_URL}/api/calendar/upcoming?include_all=${includeAllCalendarEvents}`);
+        const data = await res.json();
+        const events = data.events || [];
+        if (!events.length) {
+          container.innerHTML = `<div class="col-span-2 text-xs text-slate-400 py-10 text-center">No upcoming events found.</div>`;
+          return;
+        }
+
+        container.innerHTML = events.map(ev => {
+          const rawStart = ev.start.dateTime || ev.start.date;
+          return `
+            <div class="glass-card p-4 rounded-xl space-y-1.5">
+              <div class="flex justify-between items-start">
+                <h4 class="text-xs font-bold text-white truncate">${escapeHtml(ev.summary || 'Event')}</h4>
+                <a href="${ev.htmlLink}" target="_blank" class="text-blue-400 p-1 hover:text-blue-300"><i data-lucide="external-link" class="w-3.5 h-3.5"></i></a>
+              </div>
+              <p class="text-[11px] text-slate-400">${new Date(rawStart).toLocaleString()}</p>
+            </div>
+          `;
+        }).join('');
+        lucide.createIcons();
+      } catch (err) {}
+    }
+
+    function toggleCalendarAllEvents() {
+      includeAllCalendarEvents = !includeAllCalendarEvents;
+      document.getElementById('btn-calendar-all-circle').className = includeAllCalendarEvents ? "translate-x-5 pointer-events-none inline-block h-4 w-4 transform rounded-full bg-white shadow transition" : "translate-x-0 pointer-events-none inline-block h-4 w-4 transform rounded-full bg-white shadow transition";
+      document.getElementById('btn-calendar-all-toggle').className = includeAllCalendarEvents ? "relative inline-flex h-5 w-10 shrink-0 cursor-pointer rounded-full border-2 border-transparent bg-blue-600 transition-colors" : "relative inline-flex h-5 w-10 shrink-0 cursor-pointer rounded-full border-2 border-transparent bg-slate-700 transition-colors";
+      loadCalendarEvents();
+    }
+
+    async function loadSettings() {
+      try {
+        const res = await fetch(`${BACKEND_URL}/api/settings`);
+        const data = await res.json();
+
+        // 1. Only Files Toggle
+        onlyFilesSetting = !!data.only_remind_with_files;
+        document.getElementById('btn-file-toggle-circle').className = onlyFilesSetting ? "translate-x-5 pointer-events-none inline-block h-4 w-4 transform rounded-full bg-white shadow transition" : "translate-x-0 pointer-events-none inline-block h-4 w-4 transform rounded-full bg-white shadow transition";
+        document.getElementById('btn-file-toggle').className = onlyFilesSetting ? "relative inline-flex h-5 w-10 shrink-0 cursor-pointer rounded-full border-2 border-transparent bg-blue-600 transition-colors" : "relative inline-flex h-5 w-10 shrink-0 cursor-pointer rounded-full border-2 border-transparent bg-slate-700 transition-colors";
+
+        // 2. Custom Design Instructions Toggle
+        designEventsSetting = !!data.design_events_enabled;
+        document.getElementById('btn-design-toggle-circle').className = designEventsSetting ? "translate-x-5 pointer-events-none inline-block h-4 w-4 transform rounded-full bg-white shadow transition" : "translate-x-0 pointer-events-none inline-block h-4 w-4 transform rounded-full bg-white shadow transition";
+        document.getElementById('btn-design-toggle').className = designEventsSetting ? "relative inline-flex h-5 w-10 shrink-0 cursor-pointer rounded-full border-2 border-transparent bg-blue-600 transition-colors" : "relative inline-flex h-5 w-10 shrink-0 cursor-pointer rounded-full border-2 border-transparent bg-slate-700 transition-colors";
+
+        // 3. Spam Sensitivity Slider
+        spamThresholdSetting = data.spam_threshold || 50;
+        document.getElementById('spam-threshold-slider').value = spamThresholdSetting;
+        onSpamThresholdSlider(spamThresholdSetting);
+
+        // 4. Inputs
+        if (data.default_timing) document.getElementById('default-timing-input').value = data.default_timing;
+        if (data.design_events_prompt) document.getElementById('design-prompt-input').value = data.design_events_prompt;
+      } catch (err) {}
+    }
+
+    function onSpamThresholdSlider(v) {
+      document.getElementById('spam-threshold-badge').innerText = `${v}%`;
+    }
+
+    async function saveSpamThreshold(v) {
+      await fetch(`${BACKEND_URL}/api/settings`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ spam_threshold: parseInt(v, 10) })
+      });
+      showToast(`AI Spam Sensitivity set to ${v}%`, 'success');
+    }
+
+    async function toggleOnlyFilesSetting() {
+      onlyFilesSetting = !onlyFilesSetting;
+      document.getElementById('btn-file-toggle-circle').className = onlyFilesSetting ? "translate-x-5 pointer-events-none inline-block h-4 w-4 transform rounded-full bg-white shadow transition" : "translate-x-0 pointer-events-none inline-block h-4 w-4 transform rounded-full bg-white shadow transition";
+      document.getElementById('btn-file-toggle').className = onlyFilesSetting ? "relative inline-flex h-5 w-10 shrink-0 cursor-pointer rounded-full border-2 border-transparent bg-blue-600 transition-colors" : "relative inline-flex h-5 w-10 shrink-0 cursor-pointer rounded-full border-2 border-transparent bg-slate-700 transition-colors";
+      await fetch(`${BACKEND_URL}/api/settings`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ only_remind_with_files: onlyFilesSetting })
+      });
+      showToast(`Only Remind With Files: ${onlyFilesSetting ? 'Enabled' : 'Disabled'}`, 'info');
+    }
+
+    async function toggleDesignEventsSetting() {
+      designEventsSetting = !designEventsSetting;
+      document.getElementById('btn-design-toggle-circle').className = designEventsSetting ? "translate-x-5 pointer-events-none inline-block h-4 w-4 transform rounded-full bg-white shadow transition" : "translate-x-0 pointer-events-none inline-block h-4 w-4 transform rounded-full bg-white shadow transition";
+      document.getElementById('btn-design-toggle').className = designEventsSetting ? "relative inline-flex h-5 w-10 shrink-0 cursor-pointer rounded-full border-2 border-transparent bg-blue-600 transition-colors" : "relative inline-flex h-5 w-10 shrink-0 cursor-pointer rounded-full border-2 border-transparent bg-slate-700 transition-colors";
+      await fetch(`${BACKEND_URL}/api/settings`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ design_events_enabled: designEventsSetting })
+      });
+      showToast(`Custom AI Prompt: ${designEventsSetting ? 'Active' : 'Deactivated'}`, 'info');
+    }
+
+    async function saveDefaultTiming() {
+      const v = document.getElementById('default-timing-input').value;
+      await fetch(`${BACKEND_URL}/api/settings`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ default_timing: v })
+      });
+      showToast(`Default Event Time saved as ${v}`, 'success');
+    }
+
+    async function saveDesignPrompt() {
+      const v = document.getElementById('design-prompt-input').value;
+      await fetch(`${BACKEND_URL}/api/settings`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ design_events_prompt: v, design_events_enabled: true })
+      });
+      designEventsSetting = true;
+      document.getElementById('btn-design-toggle-circle').className = "translate-x-5 pointer-events-none inline-block h-4 w-4 transform rounded-full bg-white shadow transition";
+      document.getElementById('btn-design-toggle').className = "relative inline-flex h-5 w-10 shrink-0 cursor-pointer rounded-full border-2 border-transparent bg-blue-600 transition-colors";
+      showToast("Custom AI instructions saved!", 'success');
+    }
+
+    function clearTerminalLogs() {
+      document.getElementById('log-terminal').innerHTML = '<div class="text-slate-500 italic">• Terminal cleared.</div>';
     }
 
     function initLogs() {
-      const logSource = new EventSource(`${BACKEND_URL}/api/logs/stream`);
-      const logTerminal = document.getElementById('log-terminal');
-      logSource.onmessage = function(event) {
-        const raw = event.data;
-        const line = document.createElement('div');
-        line.innerText = `• ${raw}`;
-        if (raw.includes('[ERROR]')) line.className = "text-rose-400";
-        else line.className = "text-slate-400";
-        logTerminal.appendChild(line);
-        logTerminal.scrollTop = logTerminal.scrollHeight;
+      if (logSource) {
+        logSource.close();
+        logSource = null;
+      }
+
+      logSource = new EventSource(`${BACKEND_URL}/api/logs/stream`);
+      const term = document.getElementById('log-terminal');
+
+      logSource.onmessage = (e) => {
+        if (!e.data || !e.data.trim()) return;
+        const div = document.createElement('div');
+        div.className = "flex items-start gap-2 text-[11px] leading-relaxed";
+
+        if (e.data.includes('[ERROR]') || e.data.includes('[FAIL]')) {
+          div.innerHTML = `<span class="text-rose-400 font-bold">[FAIL]</span> <span>${escapeHtml(e.data)}</span>`;
+        } else if (e.data.includes('[SUCCESS]') || e.data.includes('[PASS]')) {
+          div.innerHTML = `<span class="text-emerald-400 font-bold">[PASS]</span> <span>${escapeHtml(e.data)}</span>`;
+        } else {
+          div.innerHTML = `<span class="text-slate-500">❯</span> <span>${escapeHtml(e.data)}</span>`;
+        }
+
+        term.appendChild(div);
+        term.scrollTop = term.scrollHeight;
+      };
+
+      logSource.onerror = () => {
+        if (logSource) logSource.close();
+        setTimeout(initLogs, 5000);
       };
     }
 
-    // Initialize UI
-    lucide.createIcons();
-    loadUser();
-    loadAccounts();
-    loadSettings();
-    loadStats();
-    loadFeed();
-    initLogs();
-    setInterval(loadStats, 5000);
-    setInterval(pollInspectStatus, 3000);
+    async function toggleInspect() {
+      const isRunning = document.getElementById('inspect-btn-label').innerText.includes("Stop");
+
+      if (isRunning) {
+        await fetch(`${BACKEND_URL}/api/inspect/stop`, { method: 'POST' });
+        document.getElementById('inspect-btn-label').innerText = "Start Scan";
+        document.getElementById('inspect-status-text').innerText = "Scan stopping...";
+        if (inspectWatcher) { clearInterval(inspectWatcher); inspectWatcher = null; }
+        return;
+      }
+
+      const count = parseInt(document.getElementById('inspect-count-select').value, 10);
+      await fetch(`${BACKEND_URL}/api/inspect/start`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ count })
+      });
+
+      document.getElementById('inspect-btn-label').innerText = "Stop Scan";
+      startInspectPolling();
+    }
+
+    function startInspectPolling() {
+      if (inspectWatcher) clearInterval(inspectWatcher);
+
+      inspectWatcher = setInterval(async () => {
+        try {
+          const res = await fetch(`${BACKEND_URL}/api/inspect/status`);
+          const data = await res.json();
+
+          const statusText = document.getElementById('inspect-status-text');
+          const progressBar = document.getElementById('inspect-progress-bar');
+          const btnLabel = document.getElementById('inspect-btn-label');
+
+          if (statusText) statusText.innerText = data.status_message || "Scanning...";
+
+          const target = data.target_count || 10;
+          const current = data.current_count || 0;
+          const pct = Math.min(100, Math.round((current / target) * 100));
+          if (progressBar) progressBar.style.width = `${pct}%`;
+
+          if (!data.is_running) {
+            clearInterval(inspectWatcher);
+            inspectWatcher = null;
+            if (btnLabel) btnLabel.innerText = "Start Scan";
+            await loadStats();
+            await loadDashboardActivity();
+            await loadDashboardCalendar();
+          }
+        } catch (err) {}
+      }, 1000);
+    }
+
+    window.addEventListener('DOMContentLoaded', () => {
+      lucide.createIcons();
+      loadUser();
+      loadAccounts();
+      loadStats();
+      loadDashboardActivity();
+      loadDashboardCalendar();
+      initLogs();
+
+      // Check if an inspect scan is already running in the background
+      fetch(`${BACKEND_URL}/api/inspect/status`)
+        .then(r => r.json())
+        .then(d => {
+          if (d.is_running) {
+            document.getElementById('inspect-btn-label').innerText = "Stop Scan";
+            startInspectPolling();
+          }
+        }).catch(() => {});
+
+      setInterval(() => {
+        loadStats();
+        loadDashboardActivity();
+        loadDashboardCalendar();
+      }, 6000);
+    });
   </script>
 </body>
 </html>

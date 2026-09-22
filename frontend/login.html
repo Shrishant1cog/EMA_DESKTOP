@@ -2,12 +2,12 @@
 <html lang="en" class="dark">
 <head>
   <meta charset="UTF-8">
-  <title>Sign In • Smart Calendar Assistant</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Sign In • Smart Universal Email Assistant</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
 
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://unpkg.com/lucide@latest"></script>
@@ -26,6 +26,12 @@
   </script>
 
   <style>
+    body {
+      background-color: #060913;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    /* GPU-Accelerated Dynamic Aurora Shaders */
     .aurora-container {
       position: fixed;
       inset: 0;
@@ -38,11 +44,11 @@
     .aurora-blob {
       position: absolute;
       border-radius: 50%;
-      filter: blur(110px);
-      opacity: 0.38;
+      filter: blur(100px);
+      opacity: 0.35;
       mix-blend-mode: screen;
       will-change: transform;
-      transform: translateZ(0);
+      transform: translate3d(0, 0, 0);
     }
 
     .blob-1 {
@@ -51,7 +57,7 @@
       background: radial-gradient(circle, rgba(99, 102, 241, 0.75) 0%, rgba(67, 56, 202, 0) 70%);
       top: -20%; 
       left: -10%;
-      animation: drift-1 28s ease-in-out infinite alternate;
+      animation: drift-1 24s ease-in-out infinite alternate;
     }
 
     .blob-2 {
@@ -60,7 +66,7 @@
       background: radial-gradient(circle, rgba(14, 165, 233, 0.65) 0%, rgba(2, 132, 199, 0) 70%);
       bottom: -15%; 
       right: -10%;
-      animation: drift-2 32s ease-in-out infinite alternate;
+      animation: drift-2 28s ease-in-out infinite alternate;
     }
 
     .blob-3 {
@@ -69,90 +75,188 @@
       background: radial-gradient(circle, rgba(168, 85, 247, 0.5) 0%, rgba(126, 34, 206, 0) 70%);
       top: 30%; 
       left: 30%;
-      animation: drift-3 36s ease-in-out infinite alternate;
+      animation: drift-3 32s ease-in-out infinite alternate;
     }
 
     @keyframes drift-1 {
-      0%   { transform: translate(0, 0) scale(1); }
-      50%  { transform: translate(120px, 80px) scale(1.15); }
-      100% { transform: translate(-60px, 140px) scale(0.95); }
+      0%   { transform: translate3d(0, 0, 0) scale(1); }
+      50%  { transform: translate3d(100px, 60px, 0) scale(1.12); }
+      100% { transform: translate3d(-50px, 110px, 0) scale(0.96); }
     }
 
     @keyframes drift-2 {
-      0%   { transform: translate(0, 0) scale(1); }
-      50%  { transform: translate(-140px, -90px) scale(1.12); }
-      100% { transform: translate(80px, -60px) scale(0.9); }
+      0%   { transform: translate3d(0, 0, 0) scale(1); }
+      50%  { transform: translate3d(-110px, -70px, 0) scale(1.1); }
+      100% { transform: translate3d(60px, -45px, 0) scale(0.92); }
     }
 
     @keyframes drift-3 {
-      0%   { transform: translate(0, 0) scale(0.95); }
-      50%  { transform: translate(-100px, 110px) scale(1.2); }
-      100% { transform: translate(110px, -70px) scale(1); }
+      0%   { transform: translate3d(0, 0, 0) scale(0.95); }
+      50%  { transform: translate3d(-75px, 80px, 0) scale(1.15); }
+      100% { transform: translate3d(85px, -50px, 0) scale(1); }
     }
 
+    /* Mobile battery & GPU conservation */
+    @media (pointer: coarse) {
+      .aurora-blob {
+        opacity: 0.18 !important;
+        filter: blur(50px) !important;
+        animation: none !important;
+      }
+    }
+
+    /* Ultra-Smooth Glassmorphic Container */
     .glass-card {
-      background: rgba(13, 18, 30, 0.65);
-      backdrop-filter: blur(24px);
-      -webkit-backdrop-filter: blur(24px);
-      border: 1px solid rgba(255, 255, 255, 0.09);
-      box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+      background: rgba(13, 18, 30, 0.72);
+      backdrop-filter: blur(28px);
+      -webkit-backdrop-filter: blur(28px);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      box-shadow: 0 30px 60px -12px rgba(0, 0, 0, 0.65), 0 0 0 1px rgba(255, 255, 255, 0.05);
+    }
+
+    /* Card Entrance Physics */
+    .card-spring-appear {
+      animation: springAppear 0.55s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+      will-change: transform, opacity;
+    }
+    @keyframes springAppear {
+      from {
+        opacity: 0;
+        transform: translate3d(0, 20px, 0) scale(0.95);
+      }
+      to {
+        opacity: 1;
+        transform: translate3d(0, 0, 0) scale(1);
+      }
+    }
+
+    /* Icon Floating Breathing Effect */
+    .badge-float {
+      animation: badgeFloat 4.5s ease-in-out infinite alternate;
+      will-change: transform;
+    }
+    @keyframes badgeFloat {
+      0% { transform: translateY(0px) rotate(0deg); }
+      100% { transform: translateY(-6px) rotate(1.5deg); }
+    }
+
+    /* Button Hardware Spring Physics */
+    .btn-bounce {
+      transition: transform 0.18s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.2s ease, filter 0.18s ease;
+      will-change: transform;
+    }
+    .btn-bounce:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 14px 30px -8px rgba(255, 255, 255, 0.22);
+      filter: brightness(1.03);
+    }
+    .btn-bounce:active {
+      transform: scale(0.95) translateY(1px) !important;
+      filter: brightness(0.94);
+    }
+
+    /* Interactive Light Sheen Sweep */
+    .sheen-sweep {
+      position: relative;
+      overflow: hidden;
+    }
+    .sheen-sweep::after {
+      content: '';
+      position: absolute;
+      top: -50%;
+      left: -60%;
+      width: 220%;
+      height: 200%;
+      background: linear-gradient(60deg, transparent 20%, rgba(255, 255, 255, 0.35) 25%, transparent 30%);
+      transform: translate3d(-100%, 0, 0);
+      transition: transform 0.8s ease;
+    }
+    .sheen-sweep:hover::after {
+      transform: translate3d(100%, 0, 0);
+    }
+
+    /* Radar Pulse for Chrome Waiting State */
+    .radar-ring {
+      animation: radarPulse 2.2s cubic-bezier(0.24, 0, 0.38, 1) infinite;
+    }
+    @keyframes radarPulse {
+      0% { transform: scale(0.85); opacity: 0.8; }
+      50% { transform: scale(1.2); opacity: 0.15; }
+      100% { transform: scale(0.85); opacity: 0.8; }
+    }
+
+    /* Error Shake */
+    .shake-error {
+      animation: shake 0.4s cubic-bezier(0.36, 0.07, 0.19, 0.97) both;
+    }
+    @keyframes shake {
+      10%, 90% { transform: translate3d(-1px, 0, 0); }
+      20%, 80% { transform: translate3d(2px, 0, 0); }
+      30%, 50%, 70% { transform: translate3d(-3px, 0, 0); }
+      40%, 60% { transform: translate3d(3px, 0, 0); }
     }
   </style>
 </head>
-<body class="text-slate-200 min-h-screen font-sans antialiased relative overflow-hidden flex items-center justify-center p-6 selection:bg-indigo-500/30 selection:text-indigo-200">
+<body class="text-slate-200 min-h-screen font-sans antialiased relative overflow-hidden flex items-center justify-center p-4 sm:p-6 selection:bg-indigo-500/30 selection:text-indigo-200">
 
+  <!-- Dynamic Ambient Shader Canvas -->
   <div class="aurora-container">
     <div class="aurora-blob blob-1"></div>
     <div class="aurora-blob blob-2"></div>
     <div class="aurora-blob blob-3"></div>
   </div>
 
-  <div class="relative z-10 max-w-md w-full glass-card rounded-3xl p-8 sm:p-10 text-center space-y-7 border border-white/10">
+  <!-- Main Sign-In Card -->
+  <div class="card-spring-appear relative z-10 max-w-md w-full glass-card rounded-3xl p-7 sm:p-9 text-center space-y-6">
 
-    <div class="relative mx-auto w-20 h-20 flex items-center justify-center">
-      <div class="absolute inset-0 rounded-3xl bg-indigo-500/20 blur-xl animate-pulse"></div>
-      <div class="relative w-20 h-20 rounded-3xl bg-gradient-to-tr from-indigo-600/30 to-purple-600/20 border border-indigo-400/30 text-indigo-300 flex items-center justify-center shadow-inner">
-        <i data-lucide="calendar-heart" class="w-10 h-10"></i>
+    <!-- Glowing Brand Icon -->
+    <div class="relative mx-auto w-20 h-20 flex items-center justify-center badge-float">
+      <div class="absolute inset-0 rounded-3xl bg-indigo-500/25 blur-xl animate-pulse"></div>
+      <div class="relative w-20 h-20 rounded-3xl bg-gradient-to-tr from-indigo-600/40 via-purple-600/30 to-indigo-500/20 border border-indigo-400/40 text-indigo-300 flex items-center justify-center shadow-inner">
+        <i data-lucide="sparkles" class="w-10 h-10 drop-shadow-md"></i>
       </div>
     </div>
 
-    <div class="space-y-2">
-      <h1 class="text-2xl font-bold tracking-tight text-white">Smart Calendar Assistant</h1>
+    <!-- Title & Description -->
+    <div class="space-y-1.5">
+      <h1 class="text-2xl font-bold tracking-tight text-white">Smart Universal Assistant</h1>
       <p class="text-xs text-slate-400 leading-relaxed max-w-xs mx-auto">
-        Your autonomous scheduling companion. Connect your Google account to automatically turn meeting emails into calendar events.
+        Multi-account inbox synchronization & autonomous event scheduling powered by your personal Google Workspace.
       </p>
     </div>
 
-    <!-- Error Box -->
-    <div id="auth-error-box" class="hidden p-3 rounded-xl bg-rose-500/10 border border-rose-500/30 text-rose-300 text-xs text-left flex items-start gap-2.5">
+    <!-- Error Banner -->
+    <div id="auth-error-box" class="hidden p-3.5 rounded-2xl bg-rose-500/10 border border-rose-500/30 text-rose-300 text-xs text-left flex items-start gap-3 shake-error">
       <i data-lucide="alert-circle" class="w-4 h-4 shrink-0 mt-0.5 text-rose-400"></i>
       <span id="auth-error-msg">Authentication error occurred. Please try again.</span>
     </div>
 
-    <div class="text-left space-y-2.5 py-3 border-y border-white/5 text-xs text-slate-300">
-      <div class="flex items-center gap-2.5">
-        <div class="w-5 h-5 rounded-full bg-emerald-500/10 text-emerald-400 flex items-center justify-center shrink-0">
-          <i data-lucide="check" class="w-3 h-3"></i>
+    <!-- Feature Checklist Pills -->
+    <div class="text-left space-y-2 py-3 border-y border-white/[0.07] text-xs text-slate-300">
+      <div class="flex items-center gap-3 p-1.5 rounded-xl hover:bg-white/[0.03] transition-colors">
+        <div class="w-6 h-6 rounded-lg bg-emerald-500/15 text-emerald-400 flex items-center justify-center shrink-0 border border-emerald-500/25">
+          <i data-lucide="calendar-check" class="w-3.5 h-3.5"></i>
         </div>
-        <span>Detects dates, times & meeting links automatically</span>
+        <span class="font-medium text-slate-200">Autonomous calendar invites & deadline extraction</span>
       </div>
-      <div class="flex items-center gap-2.5">
-        <div class="w-5 h-5 rounded-full bg-indigo-500/10 text-indigo-400 flex items-center justify-center shrink-0">
-          <i data-lucide="check" class="w-3 h-3"></i>
+      <div class="flex items-center gap-3 p-1.5 rounded-xl hover:bg-white/[0.03] transition-colors">
+        <div class="w-6 h-6 rounded-lg bg-indigo-500/15 text-indigo-400 flex items-center justify-center shrink-0 border border-indigo-500/25">
+          <i data-lucide="file-search" class="w-3.5 h-3.5"></i>
         </div>
-        <span>Reads attachments (PDFs, Word docs, Excel schedules)</span>
+        <span class="font-medium text-slate-200">Attachment parsing (PDF, Word, Excel schedules)</span>
       </div>
-      <div class="flex items-center gap-2.5">
-        <div class="w-5 h-5 rounded-full bg-purple-500/10 text-purple-400 flex items-center justify-center shrink-0">
-          <i data-lucide="check" class="w-3 h-3"></i>
+      <div class="flex items-center gap-3 p-1.5 rounded-xl hover:bg-white/[0.03] transition-colors">
+        <div class="w-6 h-6 rounded-lg bg-purple-500/15 text-purple-400 flex items-center justify-center shrink-0 border border-purple-500/25">
+          <i data-lucide="shield-check" class="w-3.5 h-3.5"></i>
         </div>
-        <span>Schedules directly to your primary Google Calendar</span>
+        <span class="font-medium text-slate-200">Multi-inbox support with AI spam/scam filters</span>
       </div>
     </div>
 
-    <!-- Sign In Button -->
-    <div class="space-y-3">
-      <button id="btn-google-login" onclick="startGoogleAuth()" class="relative overflow-hidden flex items-center justify-center gap-3 w-full py-3.5 px-6 rounded-2xl bg-white hover:bg-slate-100 text-slate-900 font-semibold text-sm transition-all shadow-xl active:scale-95 group">
+    <!-- Interactive Actions Container -->
+    <div class="space-y-3 pt-1">
+      <!-- Google Sign In Button -->
+      <button id="btn-google-login" onclick="startGoogleAuth(event)" class="sheen-sweep btn-bounce relative flex items-center justify-center gap-3 w-full py-3.5 px-6 rounded-2xl bg-white hover:bg-slate-50 text-slate-900 font-bold text-xs sm:text-sm shadow-xl active:scale-95 group cursor-pointer">
         <svg class="w-4 h-4 shrink-0 transition-transform group-hover:scale-110" viewBox="0 0 24 24">
           <path fill="#4285F4" d="M23.745 12.27c0-.7-.06-1.4-.19-2.07H12v4.51h6.6c-.29 1.52-1.14 2.82-2.4 3.68v3.05h3.88c2.27-2.09 3.665-5.17 3.665-9.17Z"/>
           <path fill="#34A853" d="M12 24c3.24 0 5.95-1.08 7.93-2.91l-3.88-3.05c-1.08.72-2.45 1.16-4.05 1.16-3.12 0-5.77-2.1-6.72-4.93H1.25v3.15C3.26 21.36 7.34 24 12 24Z"/>
@@ -162,35 +266,48 @@
         <span id="btn-login-text">Continue with Google</span>
       </button>
 
-      <p class="text-[11px] text-slate-400">
-        Your data never leaves your device. All assistant models run locally.
+      <!-- Waiting State Indicator (Stays inside Desktop Window during Chrome sign-in) -->
+      <div id="waiting-state" class="hidden p-4 rounded-2xl bg-indigo-500/10 border border-indigo-500/25 space-y-2.5 transition-all">
+        <div class="flex items-center justify-center gap-2.5 text-indigo-300 text-xs font-semibold">
+          <div class="relative flex items-center justify-center">
+            <div class="w-4 h-4 rounded-full bg-indigo-400/20 radar-ring absolute"></div>
+            <div class="w-3.5 h-3.5 border-2 border-indigo-400 border-t-transparent rounded-full animate-spin"></div>
+          </div>
+          <span>Opened in Google Chrome. Waiting for sign-in...</span>
+        </div>
+        <p class="text-[11px] text-slate-400 leading-relaxed">
+          Select your Google account in the opened Chrome browser window. This app will automatically transition to your dashboard once verified.
+        </p>
+      </div>
+
+      <!-- Verified Privacy Footnote -->
+      <p class="text-[11px] text-slate-500 pt-1 flex items-center justify-center gap-1.5">
+        <i data-lucide="lock" class="w-3 h-3 text-slate-400"></i>
+        <span>OAuth tokens and assistant state persist privately in your Google Drive.</span>
       </p>
     </div>
 
   </div>
 
   <script>
-    // Universal Dynamic Backend URL: Resolves correct endpoint on any device
-    const BACKEND_HOST = (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1')
-      ? '127.0.0.1'
-      : window.location.hostname;
-    const BACKEND_URL = `${window.location.protocol}//${BACKEND_HOST}:8000`;
+    const BACKEND_URL = window.location.origin;
+    let authWatcher = null;
 
     lucide.createIcons();
 
-    // Check if already authenticated
-    async function checkAuth() {
+    // Check if user is already authenticated
+    async function checkExistingAuth() {
       try {
         const res = await fetch(`${BACKEND_URL}/api/user`);
         const data = await res.json();
         if (data.authenticated) {
-          window.location.href = "index.html";
+          window.location.replace("index.html");
         }
       } catch (err) {}
     }
-    checkAuth();
+    checkExistingAuth();
 
-    // Query params handling
+    // Query parameters error handling
     const params = new URLSearchParams(window.location.search);
     const err = params.get('auth_error');
     if (err) {
@@ -198,13 +315,58 @@
       document.getElementById('auth-error-box').classList.remove('hidden');
     }
 
-    function startGoogleAuth() {
+    async function startGoogleAuth(event) {
+      if (event) event.preventDefault();
+
       const btn = document.getElementById('btn-google-login');
-      const text = document.getElementById('btn-login-text');
-      text.innerText = "Opening Google Sign-In...";
-      btn.classList.add("opacity-80", "pointer-events-none");
-      window.location.href = `${BACKEND_URL}/auth/login`;
+      const waitingBox = document.getElementById('waiting-state');
+      
+      // Animate button into waiting mode
+      btn.classList.add('opacity-40', 'pointer-events-none');
+      waitingBox.classList.remove('hidden');
+
+      try {
+        // Tells the backend to launch system Google Chrome externally
+        const res = await fetch(`${BACKEND_URL}/api/auth/launch-browser`, { method: "POST" });
+        const data = await res.json();
+        if (data.session_id) {
+          localStorage.setItem("assistant_session_id", data.session_id);
+        }
+      } catch (e) {
+        console.error("Failed to request browser launch:", e);
+      }
+
+      // Poll until Google sign-in completes in Chrome
+      if (authWatcher) clearInterval(authWatcher);
+      authWatcher = setInterval(async () => {
+        try {
+          const res = await fetch(`${BACKEND_URL}/api/user`);
+          const data = await res.json();
+          if (data.authenticated) {
+            clearInterval(authWatcher);
+            authWatcher = null;
+            // Seamless transition to main dashboard
+            window.location.replace("index.html");
+          }
+        } catch (err) {}
+      }, 1200);
+
+      // Auto-recover if left unattended
+      setTimeout(() => {
+        if (authWatcher) {
+          btn.classList.remove('opacity-40', 'pointer-events-none');
+        }
+      }, 45000);
     }
+
+    // Safety Interceptor: Stop any direct clicks or accidental navigation inside the app
+    document.addEventListener('click', (e) => {
+      const link = e.target.closest('a');
+      if (link && link.getAttribute('href') && link.getAttribute('href').includes('auth/login')) {
+        e.preventDefault();
+        startGoogleAuth(e);
+      }
+    });
   </script>
 </body>
 </html>
