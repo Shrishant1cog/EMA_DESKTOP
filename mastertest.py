@@ -7,10 +7,8 @@ import base64
 from io import BytesIO
 from pathlib import Path
 from datetime import datetime, timedelta
-import requests
 
 from backend.utils.state_tracker import init_db
-
 # ----------------------------------------------------------------------
 # Terminal Visual Formatting
 # ----------------------------------------------------------------------
